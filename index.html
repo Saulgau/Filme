@@ -81,16 +81,16 @@
         function displayMovies(movieList) {
             const movieListElement = document.getElementById('movie-list');
             movieListElement.innerHTML = movieList.map(movie => `
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    <img src="" alt="" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold mb-2"></h2>
-                        <button onclick="openPlayer('')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
-                            Film ansehen
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+        <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
+        <div class="p-4">
+            <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
+            <button onclick="openPlayer('${movie.link}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
+                Film ansehen
+            </button>
+        </div>
+    </div>
+`).join('');
         }
 
         // Player öffnen
@@ -140,8 +140,14 @@
 
         // Dark Mode umschalten
         function toggleDarkMode() {
-            document.body.classList.toggle('dark');
-        }
+    const isDark = document.body.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark);
+}
+
+// Beim Laden der Seite den gespeicherten Modus anwenden
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark');
+}
 
         // Initialisierung
         async function init() {
