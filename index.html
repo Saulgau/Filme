@@ -6,6 +6,10 @@
     <title>Filmportal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
@@ -90,7 +94,7 @@
         <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
         <div class="p-4">
             <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
-            <button onclick="openPlayer('${movie.link}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
+            <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
                 Film ansehen
             </button>
         </div>
@@ -99,7 +103,7 @@
         }
 
         // Player öffnen
-        function openPlayer(m3u8Url) {
+        function openPlayer(m3u8Url, title) {
             const playerWindow = window.open("", "_blank");
             playerWindow.document.write(`
                 <!DOCTYPE html>
@@ -118,15 +122,44 @@
                     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
                     <script>
                         const video = document.getElementById('videoPlayer');
-                        const m3u8Url = '';
+                        const m3u8Url = '${m3u8Url}';
+                        const cookieName = 'videoTime_' + encodeURIComponent('${title}');
+                        
+                        // Zeit aus dem Cookie laden
+                        const savedTime = parseFloat(getCookie(cookieName)) || 0;
+
                         if (Hls.isSupported()) {
                             const hls = new Hls();
                             hls.loadSource(m3u8Url);
                             hls.attachMedia(video);
-                            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                                video.currentTime = savedTime;
+                                video.play();
+                            });
                         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                             video.src = m3u8Url;
-                            video.addEventListener('loadedmetadata', () => video.play());
+                            video.addEventListener('loadedmetadata', function () {
+                                video.currentTime = savedTime;
+                                video.play();
+                            });
+                        }
+
+                        // Zeit beim Schließen des Fensters speichern
+                        window.addEventListener('beforeunload', function () {
+                            setCookie(cookieName, video.currentTime, 365);
+                        });
+
+                        function getCookie(name) {
+                            const value = "; " + document.cookie;
+                            const parts = value.split("; " + name + "=");
+                            if (parts.length === 2) return parts.pop().split(";").shift();
+                        }
+
+                        function setCookie(name, value, days) {
+                            const d = new Date();
+                            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+                            const expires = "expires=" + d.toUTCString();
+                            document.cookie = name + "=" + value + ";" + expires + ";path=/";
                         }
                     <\/script>
                 </body>
@@ -145,14 +178,14 @@
 
         // Dark Mode umschalten
         function toggleDarkMode() {
-    const isDark = document.body.classList.toggle('dark');
-    localStorage.setItem('darkMode', isDark);
-}
+            const isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark);
+        }
 
-// Beim Laden der Seite den gespeicherten Modus anwenden
-if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark');
-}
+        // Beim Laden der Seite den gespeicherten Modus anwenden
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark');
+        }
 
         // Initialisierung
         async function init() {
