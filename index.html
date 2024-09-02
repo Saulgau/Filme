@@ -32,8 +32,8 @@
             </section>
             
             <section id="musical-section">
-                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
-                <div id="horror-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <h2 class="text-2xl font-semibold mb-4">Musical</h2>
+                <div id="musical-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Musicalfilme werden hier eingefügt -->
                 </div>
             </section>
@@ -52,16 +52,16 @@
                 </div>
             </section>
             
-                        <section id="comedy-section">
-                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
-                <div id="horror-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <section id="comedy-section">
+                <h2 class="text-2xl font-semibold mb-4">Komödie</h2>
+                <div id="comedy-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Komödienfilme werden hier eingefügt -->
                 </div>
             </section>
             
             <section id="kids-section">
-                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
-                <div id="horror-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <h2 class="text-2xl font-semibold mb-4">Kinderfilme</h2>
+                <div id="kids-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Kinderfilme werden hier eingefügt -->
                 </div>
             </section>
@@ -69,163 +69,170 @@
             <!-- Weitere Sektionen für andere Filmkategorien -->
         </main>
     </div>
-
     <script>
-        // Horrorfilme
-        const horrorMovies = [
-            {
-                title: "Imaginary FSK 16",
-                image: "https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8"
-            }
-        ];
-        //Musicalfilme
-        const musicalMovies = [
-            {
-                title: "Elvis FSK 6",
-                image: "https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8"
-            }
-        // Fantasyfilme
-        const fantasyMovies = [
-            {
-                title: "Harry Potter und der Stein der Weisen FSK 6 !Bald verfügbar!",
-                image: "https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg",
-                link: ""
-            }
-        ];
-        // Komödienfilme
-        const comedyMovies = [
-            {
-                title: "Chantal im Märchenland FSK 12",
-                image: "https://de.web.img3.acsta.net/pictures/24/03/01/19/29/3351541.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
-            }
-        // Kinderfilme
-        const kidsMovies = [
-            {
-                title: "Alles steht Kopf 2 FSK 0",
-                image: "https://de.web.img3.acsta.net/img/44/7d/447d0ad9c57e73e5c17b3e07c37b97c8.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/obxbvt06dz8/QlaH3NXuOEv2RjdXVcDEfQ/1725191511/obxbvt06dz8//high.m3u8"
-            },
-            {
-                title: "Ich - Einfach Unverbesserlich 4 FSK 6",
-                image: "https://cdn.kinocheck.com/i/b238psiahp.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/kfvoc2p3auf//high.m3u8"
-            }
-        ];
+    // Horrorfilme
+    const horrorMovies = [
+        {
+            title: "Imaginary FSK 16",
+            image: "https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg",
+            link: "https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8"
+        }
+    ];
+    // Musicalfilme
+    const musicalMovies = [
+        {
+            title: "Elvis FSK 6",
+            image: "https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg",
+            link: "https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8"
+        }
+    ];
+    // Fantasyfilme
+    const fantasyMovies = [
+        {
+            title: "Harry Potter und der Stein der Weisen FSK 6 !Bald verfügbar!",
+            image: "https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg",
+            link: ""
+        }
+    ];
+    // Komödienfilme
+    const comedyMovies = [
+        {
+            title: "Chantal im Märchenland FSK 12",
+            image: "https://de.web.img3.acsta.net/pictures/24/03/01/19/29/3351541.jpg",
+            link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
+        }
+    ];
+    // Kinderfilme
+    const kidsMovies = [
+        {
+            title: "Alles steht Kopf 2 FSK 0",
+            image: "https://de.web.img3.acsta.net/img/44/7d/447d0ad9c57e73e5c17b3e07c37b97c8.jpg",
+            link: "https://3jtpuy07im.swiftload.io/serve/3/obxbvt06dz8/QlaH3NXuOEv2RjdXVcDEfQ/1725191511/obxbvt06dz8//high.m3u8"
+        },
+        {
+            title: "Ich - Einfach Unverbesserlich 4 FSK 6",
+            image: "https://cdn.kinocheck.com/i/b238psiahp.jpg",
+            link: "https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/kfvoc2p3auf//high.m3u8"
+        }
+    ];
 
-        // Actionfilme
-        const actionMovies = [
-            {
-                title: "John Wick FSK 16 !Bald verfügbar!",
-                image: "https://static.wikia.nocookie.net/john-wick8561/images/d/d5/JW1_final_poster_release.jpg",
-                link: ""
-            }
-        ];
+    // Actionfilme
+    const actionMovies = [
+        {
+            title: "John Wick FSK 16 !Bald verfügbar!",
+            image: "https://static.wikia.nocookie.net/john-wick8561/images/d/d5/JW1_final_poster_release.jpg",
+            link: ""
+        }
+    ];
 
-        // Filme anzeigen
-        function displayMovies(category, movieList) {
-            const sectionElement = document.getElementById(`${category}-movies`);
-            sectionElement.innerHTML = movieList.map(movie => `
-                <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                    <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
-                        <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
-                            Film ansehen
-                        </button>
-                    </div>
+    // Filme anzeigen
+    function displayMovies(category, movieList) {
+        const sectionElement = document.getElementById(`${category}-movies`);
+        sectionElement.innerHTML = movieList.map(movie => `
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
+                    <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
+                        Film ansehen
+                    </button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        // Player öffnen
-        function openPlayer(m3u8Url, title) {
-            const playerWindow = window.open("", "_blank");
-            playerWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Filmwiedergabe</title>
-                    <style>
-                        body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-                        #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
-                    </style>
-                </head>
-                <body>
-                    <video id="videoPlayer" controls></video>
-                    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-                    <script>
-                        const video = document.getElementById('videoPlayer');
-                        const m3u8Url = '${m3u8Url}';
-                        const cookieName = 'videoTime_' + encodeURIComponent('${title}');
-                        
-                        // Zeit aus dem Cookie laden
-                        const savedTime = parseFloat(getCookie(cookieName)) || 0;
+    // Player öffnen
+    function openPlayer(m3u8Url, title) {
+        const playerWindow = window.open("", "_blank");
+        playerWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Filmwiedergabe</title>
+                <style>
+                    body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                    #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
+                </style>
+            </head>
+            <body>
+                <video id="videoPlayer" controls></video>
+                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
+                <script>
+                    const video = document.getElementById('videoPlayer');
+                    const m3u8Url = '${m3u8Url}';
+                    const cookieName = 'videoTime_' + encodeURIComponent('${title}');
+                    
+                    // Zeit aus dem Cookie laden
+                    const savedTime = parseFloat(getCookie(cookieName)) || 0;
 
-                        if (Hls.isSupported()) {
-                            const hls = new Hls();
-                            hls.loadSource(m3u8Url);
-                            hls.attachMedia(video);
-                            hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                                video.currentTime = savedTime;
-                                video.play();
-                            });
-                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                            video.src = m3u8Url;
-                            video.addEventListener('loadedmetadata', function () {
-                                video.currentTime = savedTime;
-                                video.play();
-                            });
-                        }
-
-                        // Zeit beim Schließen des Fensters speichern
-                        window.addEventListener('beforeunload', function () {
-                            setCookie(cookieName, video.currentTime, 365);
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(m3u8Url);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                            video.currentTime = savedTime;
+                            video.play();
                         });
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = m3u8Url;
+                        video.addEventListener('loadedmetadata', function () {
+                            video.currentTime = savedTime;
+                            video.play();
+                        });
+                    }
 
-                        function getCookie(name) {
-                            const value = \`; \${document.cookie}\`;
-                            const parts = value.split(\`; \${name}=\`);
-                            if (parts.length === 2) return parts.pop().split(';').shift();
-                        }
+                    // Zeit beim Schließen des Fensters speichern
+                    window.addEventListener('beforeunload', function () {
+                        setCookie(cookieName, video.currentTime, 365);
+                    });
 
-                        function setCookie(name, value, days) {
-                            const expires = new Date(Date.now() + days * 864e5).toUTCString();
-                            document.cookie = name + '=' + value + '; expires=' + expires + '; path=/';
-                        }
-                    <\/script>
-                </body>
-                </html>
-            `);
-        }
+                    function getCookie(name) {
+                        const value = \`; \${document.cookie}\`;
+                        const parts = value.split(\`; \${name}=\`);
+                        if (parts.length === 2) return parts.pop().split(';').shift();
+                    }
 
-        // Suchfunktion
-        function searchMovies() {
-            const query = document.getElementById("search-query").value.toLowerCase();
-            filterMovies("horror", horrorMovies, query);
-            filterMovies("fantasy", fantasyMovies, query);
-            filterMovies("action", actionMovies, query);
-        }
+                    function setCookie(name, value, days) {
+                        const expires = new Date(Date.now() + days * 864e5).toUTCString();
+                        document.cookie = name + '=' + value + '; expires=' + expires + '; path=/';
+                    }
+                <\/script>
+            </body>
+            </html>
+        `);
+    }
 
-        // Filme filtern
-        function filterMovies(category, movieList, query) {
-            const filteredMovies = movieList.filter(movie => movie.title.toLowerCase().includes(query));
-            displayMovies(category, filteredMovies);
-        }
+    // Suchfunktion
+    function searchMovies() {
+        const query = document.getElementById("search-query").value.toLowerCase();
+        filterMovies("horror", horrorMovies, query);
+        filterMovies("musical", musicalMovies, query);
+        filterMovies("fantasy", fantasyMovies, query);
+        filterMovies("action", actionMovies, query);
+        filterMovies("comedy", comedyMovies, query);
+        filterMovies("kids", kidsMovies, query);
+    }
 
-        // Initialisierung der Filme
-        function init() {
-            displayMovies("horror", horrorMovies);
-            displayMovies("fantasy", fantasyMovies);
-            displayMovies("action", actionMovies);
-        }
+    // Filme filtern
+    function filterMovies(category, movieList, query) {
+        const filteredMovies = movieList.filter(movie => movie.title.toLowerCase().includes(query));
+        displayMovies(category, filteredMovies);
+    }
 
-        // Seite initialisieren
-        window.onload = init;
-    </script>
+    // Initialisierung der Filme
+    function init() {
+        displayMovies("horror", horrorMovies);
+        displayMovies("musical", musicalMovies);
+        displayMovies("fantasy", fantasyMovies);
+        displayMovies("action", actionMovies);
+        displayMovies("comedy", comedyMovies);
+        displayMovies("kids", kidsMovies);
+    }
+
+    // Seite initialisieren
+    window.onload = init;
+</script>
 </body>
 </html>
