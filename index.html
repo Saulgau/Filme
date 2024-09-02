@@ -120,26 +120,30 @@
     const actionMovies = [
         {
             title: "John Wick FSK 16 !Bald verfügbar!",
-            image: "https://static.wikia.nocookie.net/john-wick8561/images/d/d5/JW1_final_poster_release.jpg",
+            image: "https://i.pinimg.com/originals/82/0b/ee/820bee1c461bddf7fc8af07fdd1abd11.jpg",
             link: ""
         }
     ];
 
-    // Filme anzeigen
-    function displayMovies(category, movieList) {
-        const sectionElement = document.getElementById(`${category}-movies`);
-        sectionElement.innerHTML = movieList.map(movie => `
-            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
-                <div class="p-4">
-                    <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
-                    <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
-                        Film ansehen
-                    </button>
-                </div>
+// Filme anzeigen
+function displayMovies(category, movieList) {
+    const sectionElement = document.getElementById(`${category}-movies`);
+    sectionElement.innerHTML = movieList.map(movie => `
+        <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+            <div style="width: 100%; padding-top: 150%; position: relative;">
+                <img src="${movie.image}" alt="${movie.title}" 
+                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                     onerror="this.src='https://via.placeholder.com/200x300?text=Bild+nicht+verfügbar'">
             </div>
-        `).join('');
-    }
+            <div class="p-4">
+                <h2 class="text-xl font-semibold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">${movie.title}</h2>
+                <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
+                    Film ansehen
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
 
     // Player öffnen
     function openPlayer(m3u8Url, title) {
