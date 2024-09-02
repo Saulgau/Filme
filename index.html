@@ -4,110 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
-    <div style="color: red; font-weight: bold; border: 2px solid red; padding: 10px; background-color: #ffe6e6;">
-    Diese Seite bietet nur Filme in guter Qualität an. Videos, die im Kino aufgenommen wurden, werden hier nicht angeboten. Daher kann es zu längeren Wartezeiten kommen, bis die Filme hier erscheinen.
-</div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+<body class="bg-gray-900 text-white transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8">
             <h1 class="text-4xl font-bold text-center mb-6">FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</h1>
             <div class="flex justify-center items-center space-x-4 flex-wrap">
-                <input type="text" id="search-query" placeholder="Filmtitel suchen..." class="p-2 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 flex-grow max-w-md">
+                <input type="text" id="search-query" placeholder="Filmtitel suchen..." class="p-2 rounded-full border border-gray-700 bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-grow max-w-md">
                 <button onclick="searchMovies()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                     Suchen
-                </button>
-                <button onclick="toggleDarkMode()" id="dark-mode-toggle" class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
                 </button>
             </div>
         </header>
         <main>
-            <div id="movie-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Filme werden durch JavaScript hier eingefügt -->
-            </div>
+            <section id="horror-section">
+                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
+                <div id="horror-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Horrorfilme werden hier eingefügt -->
+                </div>
+            </section>
+
+            <section id="fantasy-section" class="mt-12">
+                <h2 class="text-2xl font-semibold mb-4">Fantasy</h2>
+                <div id="fantasy-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Fantasyfilme werden hier eingefügt -->
+                </div>
+            </section>
+
+            <section id="action-section" class="mt-12">
+                <h2 class="text-2xl font-semibold mb-4">Action</h2>
+                <div id="action-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Actionfilme werden hier eingefügt -->
+                </div>
+            </section>
+
+            <!-- Weitere Sektionen für andere Filmkategorien -->
         </main>
     </div>
 
     <script>
-        // Filmliste
-        const movies = [
+        // Horrorfilme
+        const horrorMovies = [
             {
-                title: "Elvis FSK 6",
-                image: "https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg",
+                title: "Der Exorzist FSK 18",
+                image: "https://image.tmdb.org/t/p/w500/abcd1234.jpg",
                 link: "https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8"
             },
             {
-                title: "Imaginary FSK 16",
-                image: "https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg",
+                title: "Hereditary FSK 18",
+                image: "https://image.tmdb.org/t/p/w500/efgh5678.jpg",
                 link: "https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8"
-            },
-            {
-                title: "Alles steht Kopf 2 FSK 0",
-                image: "https://de.web.img3.acsta.net/img/44/7d/447d0ad9c57e73e5c17b3e07c37b97c8.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/obxbvt06dz8/QlaH3NXuOEv2RjdXVcDEfQ/1725191511/obxbvt06dz8//high.m3u8"
-            },
-            {
-                title: "Chantal im Märchenland FSK 12",
-                image: "https://de.web.img3.acsta.net/pictures/24/03/01/19/29/3351541.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
-            },
-            {
-                title: "Ich - Einfach Unverbesserlich 4 FSK 6",
-                image: "https://cdn.kinocheck.com/i/b238psiahp.jpg",
-                link: "https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/kfvoc2p3auf//high.m3u8"
             }
         ];
 
-        // Token abrufen
-        async function fetchToken() {
-            const tokenEndpoint = 'https://example.com/get-token';
-            try {
-                const response = await fetch(tokenEndpoint);
-                if (!response.ok) throw new Error('Token fetch failed');
-                const data = await response.json();
-                return data.token;
-            } catch (error) {
-                console.error('Error fetching token:', error);
-                return null;
+        // Fantasyfilme
+        const fantasyMovies = [
+            {
+                title: "Der Herr der Ringe FSK 12",
+                image: "https://image.tmdb.org/t/p/w500/ijkl9012.jpg",
+                link: "https://3jtpuy07im.swiftload.io/serve/3/obxbvt06dz8/QlaH3NXuOEv2RjdXVcDEfQ/1725191511/obxbvt06dz8//high.m3u8"
+            },
+            {
+                title: "Harry Potter FSK 6",
+                image: "https://image.tmdb.org/t/p/w500/mnop3456.jpg",
+                link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
             }
-        }
+        ];
 
-        // Film-Links aktualisieren
-        async function updateMovieLinks() {
-            const token = await fetchToken();
-            if (!token) {
-                console.warn('Token konnte nicht abgerufen werden. Links bleiben unverändert.');
-                return;
+        // Actionfilme
+        const actionMovies = [
+            {
+                title: "Mad Max FSK 16",
+                image: "https://image.tmdb.org/t/p/w500/qrst7890.jpg",
+                link: "https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/kfvoc2p3auf//high.m3u8"
+            },
+            {
+                title: "John Wick FSK 18",
+                image: "https://image.tmdb.org/t/p/w500/uvwx1234.jpg",
+                link: "https://3jtpuy07im.swiftload.io/serve/3/qwertyu9i7/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/qwertyu9i7//high.m3u8"
             }
-            movies.forEach(movie => {
-                const separator = movie.link.includes('?') ? '&' : '?';
-                movie.link = `token=`;
-            });
-        }
+        ];
 
         // Filme anzeigen
-        function displayMovies(movieList) {
-            const movieListElement = document.getElementById('movie-list');
-            movieListElement.innerHTML = movieList.map(movie => `
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-        <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
-        <div class="p-4">
-            <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
-            <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
-                Film ansehen
-            </button>
-        </div>
-    </div>
-`).join('');
+        function displayMovies(category, movieList) {
+            const sectionElement = document.getElementById(`${category}-movies`);
+            sectionElement.innerHTML = movieList.map(movie => `
+                <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                    <img src="${movie.image}" alt="${movie.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Bild+nicht+verfügbar'">
+                    <div class="p-4">
+                        <h2 class="text-xl font-semibold mb-2">${movie.title}</h2>
+                        <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
+                            Film ansehen
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Player öffnen
@@ -158,16 +153,14 @@
                         });
 
                         function getCookie(name) {
-                            const value = "; " + document.cookie;
-                            const parts = value.split("; " + name + "=");
-                            if (parts.length === 2) return parts.pop().split(";").shift();
+                            const value = \`; \${document.cookie}\`;
+                            const parts = value.split(\`; \${name}=\`);
+                            if (parts.length === 2) return parts.pop().split(';').shift();
                         }
 
                         function setCookie(name, value, days) {
-                            const d = new Date();
-                            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-                            const expires = "expires=" + d.toUTCString();
-                            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+                            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+                            document.cookie = name + '=' + value + '; expires=' + expires + '; path=/';
                         }
                     <\/script>
                 </body>
@@ -175,34 +168,29 @@
             `);
         }
 
-        // Filme suchen
+        // Suchfunktion
         function searchMovies() {
-            const query = document.getElementById('search-query').value.toLowerCase();
-            const filteredMovies = movies.filter(movie => 
-                movie.title.toLowerCase().includes(query)
-            );
-            displayMovies(filteredMovies);
+            const query = document.getElementById("search-query").value.toLowerCase();
+            filterMovies("horror", horrorMovies, query);
+            filterMovies("fantasy", fantasyMovies, query);
+            filterMovies("action", actionMovies, query);
         }
 
-        // Dark Mode umschalten
-        function toggleDarkMode() {
-            const isDark = document.body.classList.toggle('dark');
-            localStorage.setItem('darkMode', isDark);
+        // Filme filtern
+        function filterMovies(category, movieList, query) {
+            const filteredMovies = movieList.filter(movie => movie.title.toLowerCase().includes(query));
+            displayMovies(category, filteredMovies);
         }
 
-        // Beim Laden der Seite den gespeicherten Modus anwenden
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark');
+        // Initialisierung der Filme
+        function init() {
+            displayMovies("horror", horrorMovies);
+            displayMovies("fantasy", fantasyMovies);
+            displayMovies("action", actionMovies);
         }
 
-        // Initialisierung
-        async function init() {
-            await updateMovieLinks();
-            displayMovies(movies);
-        }
-
-        // Starten der Anwendung
-        init();
+        // Seite initialisieren
+        window.onload = init;
     </script>
 </body>
 </html>
