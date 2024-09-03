@@ -172,41 +172,6 @@ function displayMovies(category, movieList) {
                     const video = document.getElementById('videoPlayer');
                     const m3u8Url = '${m3u8Url}';
                     const cookieName = 'videoTime_' + encodeURIComponent('${title}');
-                    
-                    // Zeit aus dem Cookie laden
-                    const savedTime = parseFloat(getCookie(cookieName)) || 0;
-
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(m3u8Url);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                            video.currentTime = savedTime;
-                            video.play();
-                        });
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = m3u8Url;
-                        video.addEventListener('loadedmetadata', function () {
-                            video.currentTime = savedTime;
-                            video.play();
-                        });
-                    }
-
-                    // Zeit beim Schließen des Fensters speichern
-                    window.addEventListener('beforeunload', function () {
-                        setCookie(cookieName, video.currentTime, 365);
-                    });
-
-                    function getCookie(name) {
-                        const value = \`; \${document.cookie}\`;
-                        const parts = value.split(\`; \${name}=\`);
-                        if (parts.length === 2) return parts.pop().split(';').shift();
-                    }
-
-                    function setCookie(name, value, days) {
-                        const expires = new Date(Date.now() + days * 864e5).toUTCString();
-                        document.cookie = name + '=' + value + '; expires=' + expires + '; path=/';
-                    }
                 <\/script>
             </body>
             </html>
