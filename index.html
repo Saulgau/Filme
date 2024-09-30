@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
-    <div style="color: red; font-weight: bold; border: 2px solid red; padding: 10px; background-color: #ffe6e6;">
-    Diese Seite bietet nur Filme in guter Qualität an. Videos, die im Kino aufgenommen wurden, werden hier nicht angeboten. Daher kann es zu längeren Wartezeiten kommen, bis die Filme hier erscheinen.
-    </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link rel="manifest" href="/manifest.json">
@@ -65,10 +62,9 @@
                     <!-- Kinderfilme werden hier eingefügt -->
                 </div>
             </section>
-            
-            <!-- Weitere Sektionen für andere Filmkategorien -->
         </main>
     </div>
+
     <script>
     // Horrorfilme
     const horrorMovies = [
@@ -83,6 +79,7 @@
             link: ""
         }
     ];
+
     // Musicalfilme
     const musicalMovies = [
         {
@@ -91,6 +88,7 @@
             link: "https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8"
         }
     ];
+
     // Fantasyfilme
     const fantasyMovies = [
         {
@@ -99,6 +97,7 @@
             link: "https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8"
         }
     ];
+
     // Komödienfilme
     const comedyMovies = [
         {
@@ -107,6 +106,7 @@
             link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
         }
     ];
+
     // Kinderfilme
     const kidsMovies = [
         {
@@ -130,89 +130,73 @@
         }
     ];
 
-// Filme anzeigen
-function displayMovies(category, movieList) {
-    const sectionElement = document.getElementById(`${category}-movies`);
-    sectionElement.innerHTML = movieList.map(movie => `
-        <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-            <div style="width: 100%; padding-top: 150%; position: relative;">
-                <img src="${movie.image}" alt="${movie.title}" 
-                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
-                     onerror="this.src='https://via.placeholder.com/200x300?text=Bild+nicht+verfügbar'">
+    // Filme anzeigen
+    function displayMovies(category, movieList) {
+        const sectionElement = document.getElementById(`${category}-movies`);
+        sectionElement.innerHTML = movieList.map(movie => `
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                <div style="width: 100%; padding-top: 150%; position: relative;">
+                    <img src="${movie.image}" alt="${movie.title}" 
+                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                         onerror="this.src='https://via.placeholder.com/200x300?text=Bild+nicht+verfügbar'">
+                </div>
+                <div class="p-4">
+                    <h3 class="text-xl font-semibold mb-2">${movie.title}</h3>
+                    <button onclick="openPlayer('${movie.link}', '${movie.title}')" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                        Film ansehen
+                    </button>
+                </div>
             </div>
-            <div class="p-4">
-                <h2 class="text-xl font-semibold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">${movie.title}</h2>
-                <button onclick="openPlayer('${movie.link}', '${movie.title}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out w-full">
-                    Film ansehen
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Player im neuen Tab öffnen
-function openPlayer(m3u8Url, title) {
-    const playerWindow = window.open("", "_blank");
-    playerWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${title}</title>
-            <style>
-                body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-                #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
-            </style>
-        </head>
-        <body>
-            <video id="videoPlayer" controls></video>
-            <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-            <script>
-                const video = document.getElementById('videoPlayer');
-                const videoSrc = '${m3u8Url}';
-                if (Hls.isSupported()) {
-                    var hls = new Hls();
-                    hls.loadSource(videoSrc);
-                    hls.attachMedia(video);
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = videoSrc;
-                }
-            <\/script>
-        </body>
-        </html>
-    `);
-}
-
-    // Suchfunktion
-    function searchMovies() {
-        const query = document.getElementById("search-query").value.toLowerCase();
-        filterMovies("horror", horrorMovies, query);
-        filterMovies("musical", musicalMovies, query);
-        filterMovies("fantasy", fantasyMovies, query);
-        filterMovies("action", actionMovies, query);
-        filterMovies("comedy", comedyMovies, query);
-        filterMovies("kids", kidsMovies, query);
+        `).join('');
     }
 
-    // Filme filtern
-    function filterMovies(category, movieList, query) {
-        const filteredMovies = movieList.filter(movie => movie.title.toLowerCase().includes(query));
-        displayMovies(category, filteredMovies);
-    }
+    // Filme aus allen Kategorien anzeigen
+    displayMovies("horror", horrorMovies);
+    displayMovies("musical", musicalMovies);
+    displayMovies("fantasy", fantasyMovies);
+    displayMovies("action", actionMovies);
+    displayMovies("comedy", comedyMovies);
+    displayMovies("kids", kidsMovies);
 
-    // Initialisierung der Filme
-    function init() {
-        displayMovies("horror", horrorMovies);
-        displayMovies("musical", musicalMovies);
-        displayMovies("fantasy", fantasyMovies);
-        displayMovies("action", actionMovies);
-        displayMovies("comedy", comedyMovies);
-        displayMovies("kids", kidsMovies);
-    }
+    // Player im neuen Tab öffnen
+    function openPlayer(m3u8Url, title) {
+        if (!m3u8Url) {
+            alert("Dieser Film ist noch nicht verfügbar.");
+            return;
+        }
 
-    // Seite initialisieren
-    window.onload = init;
-</script>
+        const playerWindow = window.open("", "_blank");
+        playerWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${title}</title>
+                <style>
+                    body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                    #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
+                </style>
+            </head>
+            <body>
+                <video id="videoPlayer" controls></video>
+                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+                <script>
+                    const video = document.getElementById('videoPlayer');
+                    const videoSrc = '${m3u8Url}';
+                    if (Hls.isSupported()) {
+                        var hls = new Hls();
+                        hls.loadSource(videoSrc);
+                        hls.attachMedia(video);
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = videoSrc;
+                    }
+                <\/script>
+            </body>
+            </html>
+        `);
+    }
+    </script>
 </body>
 </html>
