@@ -150,33 +150,39 @@ function displayMovies(category, movieList) {
     `).join('');
 }
 
-    // Player öffnen
-    function openPlayer(m3u8Url, title) {
-        const playerWindow = window.open("", "_blank");
-        playerWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Filmwiedergabe</title>
-                <style>
-                    body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-                    #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
-                </style>
-            </head>
-            <body>
-                <video id="videoPlayer" controls></video>
-                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-                <script>
-                    const video = document.getElementById('videoPlayer');
-                    const m3u8Url = '${m3u8Url}';
-                    const cookieName = 'videoTime_' + encodeURIComponent('${title}');
-                <\/script>
-            </body>
-            </html>
-        `);
-    }
+// Player im neuen Tab öffnen
+function openPlayer(m3u8Url, title) {
+    const playerWindow = window.open("", "_blank");
+    playerWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${title}</title>
+            <style>
+                body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
+            </style>
+        </head>
+        <body>
+            <video id="videoPlayer" controls></video>
+            <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+            <script>
+                const video = document.getElementById('videoPlayer');
+                const videoSrc = '${m3u8Url}';
+                if (Hls.isSupported()) {
+                    var hls = new Hls();
+                    hls.loadSource(videoSrc);
+                    hls.attachMedia(video);
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoSrc;
+                }
+            <\/script>
+        </body>
+        </html>
+    `);
+}
 
     // Suchfunktion
     function searchMovies() {
