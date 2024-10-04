@@ -39,6 +39,12 @@
         .video-page.active {
             display: block;
         }
+        .main-page {
+            display: block;
+        }
+        .main-page.hidden {
+            display: none;
+        }
         .back-btn {
             background-color: #e53e3e;
             color: white;
@@ -57,80 +63,82 @@
             <h1 class="text-4xl font-bold text-center mb-6">FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</h1>
             <div class="flex justify-center items-center space-x-4 flex-wrap">
                 <input type="text" id="search-query" placeholder="Filmtitel suchen..." class="p-2 rounded-full border border-gray-700 bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-grow max-w-md">
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                <button onclick="searchMovies()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                     Suchen
                 </button>
             </div>
         </header>
 
         <!-- Film-Kategorien -->
-        <section id="horror-section">
-            <h2 class="text-2xl font-semibold mb-4">Horror</h2>
-            <div class="movie-grid">
-                <div class="movie-card">
-                    <img src="https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg" alt="Imaginary">
-                    <h3>Imaginary</h3>
-                    <a href="#video-imaginary" class="btn">Film ansehen</a>
+        <div id="main-page" class="main-page">
+            <section id="horror-section">
+                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
+                <div class="movie-grid" id="horror-movies">
+                    <div class="movie-card">
+                        <img src="https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg" alt="Imaginary">
+                        <h3>Imaginary</h3>
+                        <a href="#" class="btn" onclick="showVideo('video-imaginary')">Film ansehen</a>
+                    </div>
+                    <div class="movie-card">
+                        <img src="https://de.web.img3.acsta.net/img/51/62/5162f5126aae0fc89b7102f2524964b5.jpg" alt="A Quiet Place: Tag Eins">
+                        <h3>A Quiet Place: Tag Eins (Bald verfügbar!)</h3>
+                    </div>
                 </div>
-                <div class="movie-card">
-                    <img src="https://de.web.img3.acsta.net/img/51/62/5162f5126aae0fc89b7102f2524964b5.jpg" alt="A Quiet Place: Tag Eins">
-                    <h3>A Quiet Place: Tag Eins (Bald verfügbar!)</h3>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="musical-section">
-            <h2 class="text-2xl font-semibold mb-4">Musical</h2>
-            <div class="movie-grid">
-                <div class="movie-card">
-                    <img src="https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg" alt="Elvis">
-                    <h3>Elvis</h3>
-                    <a href="#video-elvis" class="btn">Film ansehen</a>
+            <section id="musical-section">
+                <h2 class="text-2xl font-semibold mb-4">Musical</h2>
+                <div class="movie-grid" id="musical-movies">
+                    <div class="movie-card">
+                        <img src="https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg" alt="Elvis">
+                        <h3>Elvis</h3>
+                        <a href="#" class="btn" onclick="showVideo('video-elvis')">Film ansehen</a>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="fantasy-section" class="mt-12">
-            <h2 class="text-2xl font-semibold mb-4">Fantasy</h2>
-            <div class="movie-grid">
-                <div class="movie-card">
-                    <img src="https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg" alt="Harry Potter und der Stein der Weisen">
-                    <h3>Harry Potter und der Stein der Weisen</h3>
-                    <a href="#video-harrypotter" class="btn">Film ansehen</a>
+            <section id="fantasy-section" class="mt-12">
+                <h2 class="text-2xl font-semibold mb-4">Fantasy</h2>
+                <div class="movie-grid" id="fantasy-movies">
+                    <div class="movie-card">
+                        <img src="https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg" alt="Harry Potter und der Stein der Weisen">
+                        <h3>Harry Potter und der Stein der Weisen</h3>
+                        <a href="#" class="btn" onclick="showVideo('video-harrypotter')">Film ansehen</a>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="action-section" class="mt-12">
-            <h2 class="text-2xl font-semibold mb-4">Action</h2>
-            <div class="movie-grid">
-                <div class="movie-card">
-                    <img src="https://i.pinimg.com/originals/82/0b/ee/820bee1c461bddf7fc8af07fdd1abd11.jpg" alt="John Wick">
-                    <h3>John Wick</h3>
-                    <a href="#video-johnwick" class="btn">Film ansehen</a>
+            <section id="action-section" class="mt-12">
+                <h2 class="text-2xl font-semibold mb-4">Action</h2>
+                <div class="movie-grid" id="action-movies">
+                    <div class="movie-card">
+                        <img src="https://i.pinimg.com/originals/82/0b/ee/820bee1c461bddf7fc8af07fdd1abd11.jpg" alt="John Wick">
+                        <h3>John Wick</h3>
+                        <a href="#" class="btn" onclick="showVideo('video-johnwick')">Film ansehen</a>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!-- Video-Seiten -->
         <div id="video-imaginary" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">Imaginary</h2>
             <video controls width="100%">
-                <source src="https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//master.m3u8" type="video/mp4">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8" type="video/mp4">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
             <br>
-            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+            <a href="#" class="back-btn" onclick="goBack()">Zurück zur Filmübersicht</a>
         </div>
 
         <div id="video-elvis" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">Elvis</h2>
             <video controls width="100%">
-                <source src="https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//master.m3u8" type="video/mp4">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8" type="video/mp4">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
             <br>
-            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+            <a href="#" class="back-btn" onclick="goBack()">Zurück zur Filmübersicht</a>
         </div>
 
         <div id="video-harrypotter" class="video-page">
@@ -140,19 +148,49 @@
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
             <br>
-            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+            <a href="#" class="back-btn" onclick="goBack()">Zurück zur Filmübersicht</a>
         </div>
 
         <div id="video-johnwick" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">John Wick</h2>
             <video controls width="100%">
-                <source src="https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//master.m3u8" type="video/mp4">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//high.m3u8" type="video/mp4">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
             <br>
-            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+            <a href="#" class="back-btn" onclick="goBack()">Zurück zur Filmübersicht</a>
         </div>
-
     </div>
+
+    <script>
+        function showVideo(videoId) {
+            document.getElementById('main-page').classList.add('hidden');
+            document.getElementById(videoId).classList.add('active');
+        }
+
+        function goBack() {
+            document.querySelectorAll('.video-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('main-page').classList.remove('hidden');
+        }
+
+        function searchMovies() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const sections = document.querySelectorAll('.movie-grid');
+            
+            sections.forEach(section => {
+                const movies = section.querySelectorAll('.movie-card');
+                movies.forEach(movie => {
+                    const title = movie.querySelector('h3').innerText.toLowerCase();
+                    if (title.includes(query)) {
+                        movie.style.display = 'block';
+                    } else {
+                        movie.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>
