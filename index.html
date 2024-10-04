@@ -5,198 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#000000">
+    <style>
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .movie-card {
+            background-color: #1a202c;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .movie-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .btn {
+            background-color: #3182ce;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #2b6cb0;
+        }
+        .video-page {
+            display: none;
+        }
+        .video-page.active {
+            display: block;
+        }
+        .back-btn {
+            background-color: #e53e3e;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-btn:hover {
+            background-color: #c53030;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white transition-colors duration-300">
+<body class="bg-gray-900 text-white">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8">
             <h1 class="text-4xl font-bold text-center mb-6">FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</h1>
             <div class="flex justify-center items-center space-x-4 flex-wrap">
                 <input type="text" id="search-query" placeholder="Filmtitel suchen..." class="p-2 rounded-full border border-gray-700 bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-grow max-w-md">
-                <button onclick="searchMovies()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                     Suchen
                 </button>
             </div>
         </header>
-        <main>
-            <section id="horror-section">
-                <h2 class="text-2xl font-semibold mb-4">Horror</h2>
-                <div id="horror-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Horrorfilme werden hier eingefügt -->
+
+        <!-- Film-Kategorien -->
+        <section id="horror-section">
+            <h2 class="text-2xl font-semibold mb-4">Horror</h2>
+            <div class="movie-grid">
+                <div class="movie-card">
+                    <img src="https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg" alt="Imaginary">
+                    <h3>Imaginary</h3>
+                    <a href="#video-imaginary" class="btn">Film ansehen</a>
                 </div>
-            </section>
-            
-            <section id="musical-section">
-                <h2 class="text-2xl font-semibold mb-4">Musical</h2>
-                <div id="musical-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Musicalfilme werden hier eingefügt -->
-                </div>
-            </section>
-            
-            <section id="fantasy-section" class="mt-12">
-                <h2 class="text-2xl font-semibold mb-4">Fantasy</h2>
-                <div id="fantasy-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Fantasyfilme werden hier eingefügt -->
-                </div>
-            </section>
-
-            <section id="action-section" class="mt-12">
-                <h2 class="text-2xl font-semibold mb-4">Action</h2>
-                <div id="action-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Actionfilme werden hier eingefügt -->
-                </div>
-            </section>
-            
-            <section id="comedy-section">
-                <h2 class="text-2xl font-semibold mb-4">Komödie</h2>
-                <div id="comedy-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Komödienfilme werden hier eingefügt -->
-                </div>
-            </section>
-            
-            <section id="kids-section">
-                <h2 class="text-2xl font-semibold mb-4">Kinderfilme</h2>
-                <div id="kids-movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Kinderfilme werden hier eingefügt -->
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script>
-    // Horrorfilme
-    const horrorMovies = [
-        {
-            title: "Imaginary",
-            image: "https://de.web.img2.acsta.net/pictures/24/01/31/08/13/2388278.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8"
-        },
-        {
-            title: "A Quiet Place: Tag Eins !Bald!",
-            image: "https://de.web.img3.acsta.net/img/51/62/5162f5126aae0fc89b7102f2524964b5.jpg",
-            link: ""
-        }
-    ];
-
-    // Musicalfilme
-    const musicalMovies = [
-        {
-            title: "Elvis",
-            image: "https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8"
-        }
-    ];
-
-    // Fantasyfilme
-    const fantasyMovies = [
-        {
-            title: "Harry Potter und der Stein der Weisen",
-            image: "https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8"
-        }
-    ];
-
-    // Komödienfilme
-    const comedyMovies = [
-        {
-            title: "Chantal im Märchenland",
-            image: "https://de.web.img3.acsta.net/pictures/24/03/01/19/29/3351541.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/e3eq2m4qz9t/reBKNUZNitBLrtdkFPcBEA/1725292119/e3eq2m4qz9t//high.m3u8"
-        }
-    ];
-
-    // Kinderfilme
-    const kidsMovies = [
-        {
-            title: "Alles steht Kopf 2",
-            image: "https://de.web.img3.acsta.net/img/44/7d/447d0ad9c57e73e5c17b3e07c37b97c8.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/obxbvt06dz8/QlaH3NXuOEv2RjdXVcDEfQ/1725191511/obxbvt06dz8//high.m3u8"
-        },
-        {
-            title: "Ich - Einfach Unverbesserlich 4",
-            image: "https://cdn.kinocheck.com/i/b238psiahp.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/OFRNicTzpYI7Zhl0pRoHWQ/1725129465/kfvoc2p3auf//high.m3u8"
-        }
-    ];
-
-    // Actionfilme
-    const actionMovies = [
-        {
-            title: "John Wick",
-            image: "https://i.pinimg.com/originals/82/0b/ee/820bee1c461bddf7fc8af07fdd1abd11.jpg",
-            link: "https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//high.m3u8"
-        }
-    ];
-
-    // Filme anzeigen
-    function displayMovies(category, movieList) {
-        const sectionElement = document.getElementById(`${category}-movies`);
-        sectionElement.innerHTML = movieList.map(movie => `
-            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                <div style="width: 100%; padding-top: 150%; position: relative;">
-                    <img src="${movie.image}" alt="${movie.title}" 
-                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
-                         onerror="this.src='https://via.placeholder.com/200x300?text=Bild+nicht+verfügbar'">
-                </div>
-                <div class="p-4">
-                    <h3 class="text-xl font-semibold mb-2">${movie.title}</h3>
-                    <button onclick="openPlayer('${movie.link}', '${movie.title}')" 
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                        Film ansehen
-                    </button>
+                <div class="movie-card">
+                    <img src="https://de.web.img3.acsta.net/img/51/62/5162f5126aae0fc89b7102f2524964b5.jpg" alt="A Quiet Place: Tag Eins">
+                    <h3>A Quiet Place: Tag Eins (Bald verfügbar!)</h3>
                 </div>
             </div>
-        `).join('');
-    }
+        </section>
 
-    // Filme aus allen Kategorien anzeigen
-    displayMovies("horror", horrorMovies);
-    displayMovies("musical", musicalMovies);
-    displayMovies("fantasy", fantasyMovies);
-    displayMovies("action", actionMovies);
-    displayMovies("comedy", comedyMovies);
-    displayMovies("kids", kidsMovies);
+        <section id="musical-section">
+            <h2 class="text-2xl font-semibold mb-4">Musical</h2>
+            <div class="movie-grid">
+                <div class="movie-card">
+                    <img src="https://www.mairie-leluc.com/wp-content/uploads/2022/06/0417000.jpg-r_1920_1080-f_jpg-q_x-xxyxx.jpg" alt="Elvis">
+                    <h3>Elvis</h3>
+                    <a href="#video-elvis" class="btn">Film ansehen</a>
+                </div>
+            </div>
+        </section>
 
-    // Player im neuen Tab öffnen
-    function openPlayer(m3u8Url, title) {
-        if (!m3u8Url) {
-            alert("Dieser Film ist noch nicht verfügbar.");
-            return;
-        }
+        <section id="fantasy-section" class="mt-12">
+            <h2 class="text-2xl font-semibold mb-4">Fantasy</h2>
+            <div class="movie-grid">
+                <div class="movie-card">
+                    <img src="https://musicart.xboxlive.com/7/8fe05000-0000-0000-0000-000000000002/504/image.jpg" alt="Harry Potter und der Stein der Weisen">
+                    <h3>Harry Potter und der Stein der Weisen</h3>
+                    <a href="#video-harrypotter" class="btn">Film ansehen</a>
+                </div>
+            </div>
+        </section>
 
-        const playerWindow = window.open("", "_blank");
-        playerWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${title}</title>
-                <style>
-                    body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-                    #videoPlayer { width: 100%; max-width: 1280px; height: auto; max-height: 90vh; }
-                </style>
-            </head>
-            <body>
-                <video id="videoPlayer" controls></video>
-                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-                <script>
-                    const video = document.getElementById('videoPlayer');
-                    const videoSrc = '${m3u8Url}';
-                    if (Hls.isSupported()) {
-                        var hls = new Hls();
-                        hls.loadSource(videoSrc);
-                        hls.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = videoSrc;
-                    }
-                <\/script>
-            </body>
-            </html>
-        `);
-    }
-    </script>
+        <section id="action-section" class="mt-12">
+            <h2 class="text-2xl font-semibold mb-4">Action</h2>
+            <div class="movie-grid">
+                <div class="movie-card">
+                    <img src="https://i.pinimg.com/originals/82/0b/ee/820bee1c461bddf7fc8af07fdd1abd11.jpg" alt="John Wick">
+                    <h3>John Wick</h3>
+                    <a href="#video-johnwick" class="btn">Film ansehen</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video-Seiten -->
+        <div id="video-imaginary" class="video-page">
+            <h2 class="text-2xl font-semibold mb-4">Imaginary</h2>
+            <video controls width="100%">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//master.m3u8" type="video/mp4">
+                Dein Browser unterstützt das Video-Format nicht.
+            </video>
+            <br>
+            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+        </div>
+
+        <div id="video-elvis" class="video-page">
+            <h2 class="text-2xl font-semibold mb-4">Elvis</h2>
+            <video controls width="100%">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//master.m3u8" type="video/mp4">
+                Dein Browser unterstützt das Video-Format nicht.
+            </video>
+            <br>
+            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+        </div>
+
+        <div id="video-harrypotter" class="video-page">
+            <h2 class="text-2xl font-semibold mb-4">Harry Potter und der Stein der Weisen</h2>
+            <video controls width="100%">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8" type="video/mp4">
+                Dein Browser unterstützt das Video-Format nicht.
+            </video>
+            <br>
+            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+        </div>
+
+        <div id="video-johnwick" class="video-page">
+            <h2 class="text-2xl font-semibold mb-4">John Wick</h2>
+            <video controls width="100%">
+                <source src="https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//master.m3u8" type="video/mp4">
+                Dein Browser unterstützt das Video-Format nicht.
+            </video>
+            <br>
+            <a href="#" class="back-btn">Zurück zur Filmübersicht</a>
+        </div>
+
+    </div>
 </body>
 </html>
