@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
         .movie-grid {
             display: grid;
@@ -80,8 +81,7 @@
                 </div>
                 <div class="movie-card" data-title="a quiet place tag eins">
                     <img src="https://de.web.img3.acsta.net/img/51/62/5162f5126aae0fc89b7102f2524964b5.jpg" alt="A Quiet Place: Tag Eins">
-                    <h3>A Quiet Place: Tag Eins</h3>
-                    <a href="#" class="btn" onclick="showVideo('video-aqp1')">Film ansehen</a>
+                    <h3>A Quiet Place: Tag Eins (Bald verfügbar!)</h3>
                 </div>
 
                 <!-- Musical-Filme -->
@@ -110,7 +110,7 @@
         <!-- Video-Seiten -->
         <div id="video-imaginary" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">Imaginary</h2>
-            <video controls width="100%">
+            <video id="videoPlayerImaginary" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
                 <source src="https://3jtpuy07im.swiftload.io/serve/3/zg4v2y0cl8r/kqkxn7u_G9Lcu1u-Ipdygg/1725296331/zg4v2y0cl8r//high.m3u8" type="application/x-mpegURL">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
@@ -120,18 +120,8 @@
 
         <div id="video-elvis" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">Elvis</h2>
-            <video controls width="100%">
+            <video id="videoPlayerElvis" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
                 <source src="https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//high.m3u8" type="application/x-mpegURL">
-                Dein Browser unterstützt das Video-Format nicht.
-            </video>
-            <br>
-            <a href="#" class="back-btn" onclick="goBack()">Zurück zur Filmübersicht</a>
-        </div>
-
-                <div id="video-aqp1" class="video-page">
-            <h2 class="text-2xl font-semibold mb-4">A Quiet Place: Tag Eins</h2>
-            <video controls width="100%">
-                <source src="https://3jtpuy07im.swiftload.io/serve/3/x71xoesgd4m/0yzOMezycVN1SGfHIvnNYw/1728050148/x71xoesgd4m//master.m3u8" type="application/x-mpegURL">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
             <br>
@@ -140,7 +130,7 @@
 
         <div id="video-harrypotter" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">Harry Potter und der Stein der Weisen</h2>
-            <video controls width="100%">
+            <video id="videoPlayerHarryPotter" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
                 <source src="https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8" type="application/x-mpegURL">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
@@ -150,7 +140,7 @@
 
         <div id="video-johnwick" class="video-page">
             <h2 class="text-2xl font-semibold mb-4">John Wick</h2>
-            <video controls width="100%">
+            <video id="videoPlayerJohnWick" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
                 <source src="https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//high.m3u8" type="application/x-mpegURL">
                 Dein Browser unterstützt das Video-Format nicht.
             </video>
@@ -159,6 +149,7 @@
         </div>
     </div>
 
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
     <script>
         function showVideo(videoId) {
             document.getElementById('main-page').classList.add('hidden');
