@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -45,6 +47,7 @@
             text-align: center;
             cursor: pointer;
             transition: transform 0.3s;
+            position: relative;
         }
         .film-card:hover {
             transform: scale(1.05);
@@ -67,6 +70,14 @@
         button:hover {
             background-color: #0d8de5;
         }
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: #1da1f2;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -78,36 +89,40 @@
         <main>
             <div id="filmList" class="film-list">
                 <!-- Film 1 -->
-                <div class="film-card" data-title="Deadpool & Wolverine">
+                <div class="film-card" data-title="Deadpool & Wolverine" data-duration="7620">
                     <img src="https://cdn.kinocheck.com/i/w=1200/d3mx9y2anl.jpg" alt="Deadpool & Wolverine Poster">
                     <h2>Deadpool & Wolverine</h2>
                     <p>Jahr: 2024</p>
                     <p>Dauer:  2 h 7 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/vh74qihcjvc/zzWPTyKzZ90t55yFb5ONjw/1728178184/vh74qihcjvc//master.m3u8')">Film ansehen</button>
+                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/vh74qihcjvc/zzWPTyKzZ90t55yFb5ONjw/1728178184/vh74qihcjvc//master.m3u8', 'Deadpool & Wolverine')">Film ansehen</button>
+                    <div class="progress-bar"></div>
                 </div>
                 <!-- Film 2 -->
-                <div class="film-card" data-title="John Wick">
+                <div class="film-card" data-title="John Wick" data-duration="6060">
                     <img src="https://cdn.kinocheck.com/i/w=1200/pvatm0owmf.jpg" alt="John Wick Poster">
                     <h2>John Wick</h2>
                     <p>Jahr: 2014</p>
                     <p>Dauer: 1 h 41 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//master.m3u8')">Film ansehen</button>
+                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//master.m3u8', 'John Wick')">Film ansehen</button>
+                    <div class="progress-bar"></div>
                 </div>
                 <!-- Film 3 -->
-                <div class="film-card" data-title="Elvis">
+                <div class="film-card" data-title="Elvis" data-duration="9540">
                     <img src="https://cdn.kinocheck.com/i/j7g8i57dlw.jpg" alt="Elvis Poster">
                     <h2>Elvis</h2>
                     <p>Jahr: 2022</p>
                     <p>Dauer: 2 h 39 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//master.m3u8')">Film ansehen</button>
+                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//master.m3u8', 'Elvis')">Film ansehen</button>
+                    <div class="progress-bar"></div>
                 </div>
                 <!-- Film 4 -->
-                                <div class="film-card" data-title="Harry Potter und der Stein der Weisen">
+                <div class="film-card" data-title="Harry Potter und der Stein der Weisen" data-duration="9120">
                     <img src="https://cdn.kinocheck.com/i/w=1200/jz24pl19ny.jpg" alt="Harry Potter 1 Poster">
                     <h2>Harry Potter und der Stein der Weisen</h2>
                     <p>Jahr: 2001</p>
                     <p>Dauer: 2 h 32 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8')">Film ansehen</button>
+                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8', 'Harry Potter und der Stein der Weisen')">Film ansehen</button>
+                    <div class="progress-bar"></div>
                 </div>
             </div>
         </main>
@@ -127,7 +142,8 @@
             }
         }
 
-        function openVideoPlayer(m3u8Url) {
+        function openVideoPlayer(m3u8Url, title) {
+            const savedTime = Cookies.get(title);
             const playerWindow = window.open('', '_blank');
             playerWindow.document.write(`
                 <!DOCTYPE html>
@@ -135,31 +151,97 @@
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Video Player</title>
+                    <title>Video Player - ${title}</title>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"><\/script>
+                    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"><\/script>
                     <style>
                         body { margin: 0; padding: 0; background-color: #000; }
                         #videoPlayer { width: 100%; height: 100vh; }
+                        #resumePrompt { 
+                            position: fixed; 
+                            top: 50%; 
+                            left: 50%; 
+                            transform: translate(-50%, -50%); 
+                            background-color: rgba(0,0,0,0.8); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 10px; 
+                            text-align: center; 
+                        }
+                        #resumePrompt button { 
+                            margin: 10px; 
+                            padding: 5px 10px; 
+                            cursor: pointer; 
+                        }
                     </style>
                 </head>
                 <body>
                     <video id="videoPlayer" controls></video>
+                    <div id="resumePrompt" style="display:none;">
+                        <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
+                        <button onclick="resumePlayback(true)">Ja</button>
+                        <button onclick="resumePlayback(false)">Nein</button>
+                    </div>
                     <script>
                         const video = document.getElementById('videoPlayer');
                         const m3u8Url = '${m3u8Url}';
-                        if (Hls.isSupported()) {
-                            const hls = new Hls();
-                            hls.loadSource(m3u8Url);
-                            hls.attachMedia(video);
-                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                            video.src = m3u8Url;
+                        const savedTime = ${savedTime || 0};
+                        let hls;
+
+                        function initializePlayer() {
+                            if (Hls.isSupported()) {
+                                hls = new Hls();
+                                hls.loadSource(m3u8Url);
+                                hls.attachMedia(video);
+                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                video.src = m3u8Url;
+                            }
                         }
+
+                        function resumePlayback(resume) {
+                            document.getElementById('resumePrompt').style.display = 'none';
+                            if (resume) {
+                                video.currentTime = savedTime;
+                            }
+                            video.play();
+                        }
+
+                        initializePlayer();
+
+                        if (savedTime > 0) {
+                            document.getElementById('resumePrompt').style.display = 'block';
+                        } else {
+                            video.play();
+                        }
+
+                        video.addEventListener('timeupdate', function() {
+                            Cookies.set('${title}', video.currentTime, { expires: 365 });
+                        });
                     <\/script>
                 </body>
                 </html>
             `);
             playerWindow.document.close();
         }
+
+        function updateProgressBars() {
+            const filmCards = document.getElementsByClassName('film-card');
+            
+            for (let card of filmCards) {
+                const title = card.getAttribute('data-title');
+                const duration = parseInt(card.getAttribute('data-duration'));
+                const savedTime = Cookies.get(title);
+                
+                if (savedTime) {
+                    const progress = (savedTime / duration) * 100;
+                    const progressBar = card.querySelector('.progress-bar');
+                    progressBar.style.width = `${progress}%`;
+                }
+            }
+        }
+
+        // Aktualisiere die Fortschrittsbalken beim Laden der Seite
+        window.onload = updateProgressBars;
     </script>
 </body>
 </html>
