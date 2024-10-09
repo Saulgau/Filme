@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -219,146 +220,178 @@
         </main>
     </div>
   <script>
-function openVideoPlayer(m3u8Url, title) {
-    const savedTime = Cookies.get(title);
-    const playerWindow = window.open('', '_blank');
-    playerWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="de">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Video Player - ${title}</title>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"><\/script>
-            <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"><\/script>
-            <style>
-                body { margin: 0; padding: 0; background-color: #000; }
-                #videoPlayer { width: 100%; height: 100vh; }
-                #resumePrompt, #qualitySelector { 
-                    position: fixed; 
-                    top: 50%; 
-                    left: 50%; 
-                    transform: translate(-50%, -50%); 
-                    background-color: rgba(0,0,0,0.8); 
-                    color: white; 
-                    padding: 20px; 
-                    border-radius: 10px; 
-                    text-align: center; 
-                }
-                #resumePrompt button, #qualitySelector button { 
-                    margin: 10px; 
-                    padding: 5px 10px; 
-                    cursor: pointer; 
-                }
-                #qualityBtn {
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    z-index: 1000;
-                    background-color: rgba(0,0,0,0.5);
-                    color: white;
-                    border: none;
-                    padding: 5px 10px;
-                    cursor: pointer;
-                }
-            </style>
-        </head>
-        <body>
-            <video id="videoPlayer" controls></video>
-            <button id="qualityBtn" onclick="toggleQualitySelector()">Qualität</button>
-            <div id="resumePrompt" style="display:none;">
-                <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
-                <button onclick="resumePlayback(true)">Ja</button>
-                <button onclick="resumePlayback(false)">Nein</button>
-            </div>
-            <div id="qualitySelector" style="display:none;">
-                <p>Wähle die Videoqualität:</p>
-                <button onclick="setQuality('auto')">Auto</button>
-                <div id="qualityOptions"></div>
-            </div>
-            <script>
-            const video = document.getElementById('videoPlayer');
-            const m3u8Url = '${m3u8Url}';
-            const savedTime = ${savedTime || 0};
-            let hls;
-            let currentQuality = 'auto';
-
-            function initializePlayer() {
-                hls = new Hls({
-                    autoStartLoad: false
-                });
-                hls.loadSource(m3u8Url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                    const qualityLevels = hls.levels;
-                    const qualityOptions = document.getElementById('qualityOptions');
-                    qualityOptions.innerHTML = '';
-                    qualityLevels.forEach((level, index) => {
-                        const button = document.createElement('button');
-                        button.innerText = level.height + 'p';
-                        button.onclick = () => setQuality(index);
-                        qualityOptions.appendChild(button);
-                    });
-                    hls.startLoad();
-                    if (savedTime > 0) {
-                        document.getElementById('resumePrompt').style.display = 'block';
-                    } else {
-                        video.play();
-                    }
-                });
-            }
-
-            function resumePlayback(resume) {
-                document.getElementById('resumePrompt').style.display = 'none';
-                if (resume) {
-                    video.currentTime = savedTime;
-                }
-                video.play();
-            }
-
-            function toggleQualitySelector() {
-                const selector = document.getElementById('qualitySelector');
-                selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
-            }
-
-            function setQuality(quality) {
-                if (quality === 'auto') {
-                    hls.currentLevel = -1;
-                    currentQuality = 'auto';
+        function searchFilms() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const filmCards = document.getElementsByClassName('film-card');
+            
+            for (let card of filmCards) {
+                const title = card.getAttribute('data-title').toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
                 } else {
-                    hls.currentLevel = quality;
-                    currentQuality = hls.levels[quality].height + 'p';
+                    card.style.display = 'none';
                 }
-                updateQualityButton();
-                toggleQualitySelector();
             }
+        }
 
-            function updateQualityButton() {
-                document.getElementById('qualityBtn').innerText = 'Qualität: ' + currentQuality;
+        function openVideoPlayer(m3u8Url, title) {
+            const savedTime = Cookies.get(title);
+            const playerWindow = window.open('', '_blank');
+            playerWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="de">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Video Player - ${title}</title>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"><\/script>
+                    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"><\/script>
+                    <style>
+                        body { margin: 0; padding: 0; background-color: #000; }
+                        #videoPlayer { width: 100%; height: 100vh; }
+                        #resumePrompt, #qualitySelector { 
+                            position: fixed; 
+                            top: 50%; 
+                            left: 50%; 
+                            transform: translate(-50%, -50%); 
+                            background-color: rgba(0,0,0,0.8); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 10px; 
+                            text-align: center; 
+                        }
+                        #resumePrompt button, #qualitySelector button { 
+                            margin: 10px; 
+                            padding: 5px 10px; 
+                            cursor: pointer; 
+                        }
+                        #qualityBtn {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            z-index: 1000;
+                            background-color: rgba(0,0,0,0.5);
+                            color: white;
+                            border: none;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <video id="videoPlayer" controls></video>
+                    <button id="qualityBtn" onclick="toggleQualitySelector()">Qualität</button>
+                    <div id="resumePrompt" style="display:none;">
+                        <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
+                        <button onclick="resumePlayback(true)">Ja</button>
+                        <button onclick="resumePlayback(false)">Nein</button>
+                    </div>
+                    <div id="qualitySelector" style="display:none;">
+                        <p>Wähle die Videoqualität:</p>
+                        <button onclick="setQuality('auto')">Auto</button>
+                        <div id="qualityOptions"></div>
+                    </div>
+                    <script>
+                    const video = document.getElementById('videoPlayer');
+                        const m3u8Url = '${m3u8Url}';
+                        const savedTime = ${savedTime || 0};
+                        let hls;
+                        let currentQuality = 'auto';
+
+                        function initializePlayer() {
+                            if (Hls.isSupported()) {
+                                hls = new Hls({
+                                    autoStartLoad: false
+                                });
+                                hls.loadSource(m3u8Url);
+                                hls.attachMedia(video);
+                                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                                    const qualityLevels = hls.levels;
+                                    const qualityOptions = document.getElementById('qualityOptions');
+                                    qualityOptions.innerHTML = '';
+                                    qualityLevels.forEach((level, index) => {
+                                        const button = document.createElement('button');
+                                        button.innerText = level.height + 'p';
+                                        button.onclick = () => setQuality(index);
+                                        qualityOptions.appendChild(button);
+                                    });
+                                    hls.startLoad();
+                                });
+                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                video.src = m3u8Url;
+                            }
+                        }
+
+                        function resumePlayback(resume) {
+                            document.getElementById('resumePrompt').style.display = 'none';
+                            if (resume) {
+                                video.currentTime = savedTime;
+                            }
+                            video.play();
+                        }
+
+                        function toggleQualitySelector() {
+                            const selector = document.getElementById('qualitySelector');
+                            selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+                        }
+
+                        function setQuality(quality) {
+                            if (quality === 'auto') {
+                                hls.currentLevel = -1;
+                                currentQuality = 'auto';
+                            } else {
+                                hls.currentLevel = quality;
+                                currentQuality = hls.levels[quality].height + 'p';
+                            }
+                            updateQualityButton();
+                            toggleQualitySelector();
+                        }
+
+                        function updateQualityButton() {
+                            document.getElementById('qualityBtn').innerText = 'Qualität: ' + currentQuality;
+                        }
+
+                        initializePlayer();
+
+                        if (savedTime > 0) {
+                            document.getElementById('resumePrompt').style.display = 'block';
+                        } else {
+                            video.play();
+                        }
+
+                        video.addEventListener('timeupdate', function() {
+                            Cookies.set('${title}', video.currentTime, { expires: 365 });
+                        });
+
+                        updateQualityButton();
+                    <\/script>
+                </body>
+                </html>
+            `);
+            playerWindow.document.close();
+        }
+
+        function updateProgressBars() {
+            const filmCards = document.getElementsByClassName('film-card');
+            
+            for (let card of filmCards) {
+                const title = card.getAttribute('data-title');
+                const duration = parseInt(card.getAttribute('data-duration'));
+                const savedTime = Cookies.get(title);
+                
+                if (savedTime) {
+                    const progress = (savedTime / duration) * 100;
+                    const progressBar = card.querySelector('.progress-bar');
+                    progressBar.style.width = `${progress}%`;
+                }
             }
+        }
 
-            // Überprüfen, ob HLS.js unterstützt wird
-            if (Hls.isSupported()) {
-                initializePlayer();
-            } else {
-                console.error('HLS.js wird auf diesem Gerät nicht unterstützt.');
-                alert('Leider wird HLS.js auf diesem Gerät nicht unterstützt. Das Video kann nicht abgespielt werden.');
-            }
-
-            video.addEventListener('timeupdate', function() {
-                Cookies.set('${title}', video.currentTime, { expires: 365 });
-            });
-
-            updateQualityButton();
-            <\/script>
-        </body>
-        </html>
-    `);
-    playerWindow.document.close();
-}
+        // Aktualisiere die Fortschrittsbalken beim Laden der Seite
+        window.onload = updateProgressBars;
     </script>
     <footer>
-    <p>&copy; 2024 Alle Rechte vorbehalten | Website Version 1.19  Neue Harry-Potter-Teile hinzugefügt. 3 kommen demnächst.</p>
+    <p>&copy; 2024 Alle Rechte vorbehalten | Website Version 1.20  Neue Harry-Potter-Teile hinzugefügt. 3 kommen demnächst.</p>
 </footer>
 </body>
 </html>
