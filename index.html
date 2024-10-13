@@ -17,76 +17,171 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1d1f27;
-            color: #fff;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        header {
-            text-align: center;
-            margin: 20px 0;
-        }
-        h1 {
-            margin: 0;
-        }
-        #searchBar {
-            padding: 10px;
-            width: 300px;
-            border-radius: 5px;
-            border: none;
-        }
-        .film-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .film-card {
-            background-color: #2b2f38;
-            border-radius: 10px;
-            width: 200px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s;
-            position: relative;
-        }
-        .film-card:hover {
-            transform: scale(1.05);
-        }
-        .film-card img {
-            width: 100%;
-            border-radius: 10px;
-        }
-        .film-card h2 {
-            margin: 10px 0;
-        }
-        button {
-            background-color: #1da1f2;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0d8de5;
-        }
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 5px;
-            background-color: #1da1f2;
-            transition: width 0.3s;
-        }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1d1f27;
+    color: #fff;
+}
+.container {
+    padding: 20px;
+    padding-top: 80px;
+    height: calc(100% - 80px);
+    overflow-y: auto;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2b2f38;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+h1 {
+    margin: 0;
+    font-size: 24px;
+}
+#searchBar {
+    flex-grow: 1;
+    margin: 0 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3f4b;
+    color: #fff;
+}
+#settingsBtn {
+    background: none;
+    border: none;
+    color: #1da1f2;
+    font-size: 18px;
+    cursor: pointer;
+}
+.film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+.film-card {
+    background-color: #2b2f38;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.film-card:hover {
+    transform: scale(1.05);
+}
+.film-card img {
+    width: 100%;
+    height: auto;
+}
+.film-info {
+    padding: 10px;
+}
+.film-title {
+    margin: 0;
+    font-size: 16px;
+}
+#player {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 2000;
+    display: none;
+}
+#videoPlayer {
+    width: 100%;
+    height: 100%;
+}
+#closePlayer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    z-index: 2001;
+    cursor: pointer;
+}
+#settingsModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 3000;
+    padding: 20px;
+    overflow-y: auto;
+}
+#catalogInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #3a3f4b;
+    color: #fff;
+}
+#saveCatalog {
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#saveCatalog:hover {
+    background-color: #0d8de5;
+}
+#resumePrompt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2b2f38;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 2002;
+    display: none;
+}
+#resumePrompt button {
+    margin: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+#resumePrompt button:hover {
+    background-color: #0d8de5;
+}
+#currentCatalog {
+    margin-top: 20px;
+    word-break: break-all;
+    color: #1da1f2;
+}
+#pullToRefresh {
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    margin-top: -40px;
+    transition: margin-top 0.3s ease;
+    color: #1da1f2;
+}
     </style>
 </head>
 <body>
