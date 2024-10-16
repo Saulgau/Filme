@@ -29,7 +29,7 @@
         }
         .container {
             padding: 20px;
-            padding-top: 120px; /* Increased to accommodate header and pull-to-refresh */
+            padding-top: 120px;
             height: calc(100% - 120px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -69,16 +69,18 @@
             position: relative;
             overflow: hidden;
             border-radius: 8px;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .film-card:hover {
+        .film-card:hover, .film-card:focus {
             transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            outline: none;
         }
         .film-card img {
             width: 100%;
             height: auto;
-            display: block; /* Ensures no extra space below image */
+            display: block;
         }
         .film-info {
             position: absolute;
@@ -139,15 +141,16 @@
             border-radius: 4px;
             transition: background-color 0.3s ease;
         }
-        #resumePrompt button:hover {
+        #resumePrompt button:hover, #resumePrompt button:focus {
             background: #f40612;
+            outline: none;
         }
         #pullToRefresh {
             text-align: center;
             height: 40px;
             line-height: 40px;
             position: fixed;
-            top: 60px; /* Position below the header */
+            top: 60px;
             left: 0;
             right: 0;
             background-color: rgba(20,20,20,0.8);
@@ -157,6 +160,25 @@
         }
         .refreshing #pullToRefresh {
             transform: translateY(0);
+        }
+
+        /* Styles für große Bildschirme (Fernseher) */
+        @media (min-width: 1200px) {
+            .film-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .film-card {
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            .film-title {
+                font-size: 18px;
+            }
+        }
+
+        /* Fokus-Stil für Fernbedienungsnavigation */
+        .film-card:focus {
+            outline: 3px solid #e50914;
         }
     </style>
 </head>
@@ -189,12 +211,14 @@
         const container = document.querySelector('.container');
         const pullToRefresh = document.getElementById('pullToRefresh');
         const catalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
+        let currentFocus = -1;
 
         async function loadCatalog() {
             try {
                 const response = await fetch(catalogUrl);
                 catalog = await response.json();
                 renderFilms(catalog.films);
+                setupKeyboardNavigation();
             } catch (error) {
                 console.error('Fehler beim Laden des Katalogs:', error);
                 alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
@@ -204,9 +228,11 @@
         function renderFilms(films) {
             const filmGrid = document.getElementById('filmGrid');
             filmGrid.innerHTML = '';
-            films.forEach(film => {
+            films.forEach((film, index) => {
                 const card = document.createElement('div');
                 card.className = 'film-card';
+                card.tabIndex = 0;
+                card.setAttribute('data-index', index);
                 card.innerHTML = `
                     <img src="${film.poster}" alt="${film.title}">
                     <div class="film-info">
@@ -214,6 +240,11 @@
                     </div>
                 `;
                 card.addEventListener('click', () => playFilm(film));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        playFilm(film);
+                    }
+                });
                 filmGrid.appendChild(card);
             });
         }
@@ -308,6 +339,42 @@
             document.body.classList.remove('refreshing');
             pullToRefresh.style.transform = 'translateY(-100%)';
         });
+
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                const filmCards = document.querySelectorAll('.film-card');
+                const totalCards = filmCards.length;
+                const columns = Math.floor(document.querySelector('.film-grid').clientWidth / filmCards[0].offsetWidth);
+
+                switch(e.key) {
+                    case 'ArrowRight':
+                        if (currentFocus < totalCards - 1) currentFocus++;
+                        break;
+                    case 'ArrowLeft':
+                        if (currentFocus > 0) currentFocus--;
+                        break;
+                    case 'ArrowDown':
+                        if (currentFocus + columns < totalCards) currentFocus += columns;
+                        break;
+                    case 'ArrowUp':
+                        if (currentFocus - columns >= 0) currentFocus -= columns;
+                        break;
+                    case 'Enter':
+                        if (currentFocus >= 0 && currentFocus < totalCards) {
+                            filmCards[currentFocus].click();
+                        }
+                        break;
+                    default:
+                        return;
+                }
+
+                if (currentFocus >= 0 && currentFocus < totalCards) {
+                    filmCards[currentFocus].focus();
+                }
+
+                e.preventDefault();
+            });
+        }
 
         // Beim Start der App
         loadCatalog();
