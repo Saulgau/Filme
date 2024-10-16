@@ -1,480 +1,308 @@
-
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#141414">
     <link rel="icon" type="image/x-icon" href="/path/to/favicon.ico">
 
-<!-- For iOS devices -->
-<link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    <!-- For iOS devices -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
 
-<!-- For Android devices -->
-<link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    <title>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <!-- For Android devices -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    <title>FilmFrei</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1d1f27;
+            background-color: #141414;
             color: #fff;
+            height: 100vh;
+            overflow: hidden;
         }
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px;
+            padding-top: 80px;
+            height: calc(100% - 80px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         header {
-            text-align: center;
-            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(20,20,20,0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
         h1 {
             margin: 0;
+            font-size: 24px;
         }
         #searchBar {
-            padding: 10px;
-            width: 300px;
-            border-radius: 5px;
+            flex-grow: 1;
+            margin: 0 20px;
+            padding: 8px;
             border: none;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.2);
+            color: #fff;
         }
-        .film-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+        .film-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
         }
         .film-card {
-            background-color: #2b2f38;
-            border-radius: 10px;
-            width: 200px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s;
             position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .film-card:hover {
             transform: scale(1.05);
         }
         .film-card img {
             width: 100%;
-            border-radius: 10px;
+            height: auto;
         }
-        .film-card h2 {
-            margin: 10px 0;
-        }
-        button {
-            background-color: #1da1f2;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0d8de5;
-        }
-        .progress-bar {
+        .film-info {
             position: absolute;
             bottom: 0;
             left: 0;
-            height: 5px;
-            background-color: #1da1f2;
-            transition: width 0.3s;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+        }
+        .film-title {
+            margin: 0;
+            font-size: 14px;
+        }
+        #player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: none;
+        }
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+        }
+        #closePlayer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            z-index: 2001;
+            cursor: pointer;
+        }
+        #resumePrompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 2002;
+            display: none;
+        }
+        #resumePrompt button {
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        #resumePrompt button:hover {
+            background: #f40612;
+        }
+        #pullToRefresh {
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+            margin-top: -40px;
+            transition: margin-top 0.3s ease;
+        }
+        .refreshing #pullToRefresh {
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>FilmFrei</h1>
+        <input type="text" id="searchBar" placeholder="Film suchen...">
+    </header>
     <div class="container">
-        <header>
-            <h1>FilmFrei: Dein kostenloses Streaming-Erlebnis – 100% werbefrei!</h1>
-            <input type="text" id="searchBar" placeholder="Filmtitel suchen..." oninput="searchFilms()">
-        </header>
-        <main>
-                <div id="filmList" class="film-list">  
-                <div class="film-card" data-title="Butchers - Raghorn" data-duration="5280">
-                    <img src="https://cdn.kinocheck.com/i/b6ah71thqy.jpg" alt="Butchers - Raghorn Poster">
-                    <h2>Butchers - Raghorn</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer: 1 h 28 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/ruvm9g67ix/IPUZ8MAcr9nhT6KNY0B01g/1728842291/ruvm9g67ix//master.m3u8', 'Butchers - Raghorn')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="New Life" data-duration="5100">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/myvn71sznf.jpg" alt="New Life Poster">
-                    <h2>New Life</h2>
-                    <p>Jahr: 2023</p>
-                    <p>Dauer: 1 h 25 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/a5wcbwk0bla/yWJvvhSU32daUnzdqtCfiQ/1728840513/a5wcbwk0bla//master.m3u8', 'New Life')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Twisters" data-duration="7320">
-                    <img src="https://cdn.kinocheck.com/i/ggreqpuuxs.jpg" alt="Twisters Poster">
-                    <h2>Twisters</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer: 2 h 2 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/b2ksim2g3ec/3a_Gvx6W9Cm-6qp75ZR95A/1728840165/b2ksim2g3ec//master.m3u8', 'Twisters')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Ich – Einfach unverbesserlich 4" data-duration="5640">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/b238psiahp.jpg" alt="Ich – Einfach unverbesserlich 4 Poster">
-                    <h2>Ich – Einfach unverbesserlich 4</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer: 1 h 34 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/kfvoc2p3auf/CNdjICSqRfZ0UASVSx_FxA/1728839846/kfvoc2p3auf//master.m3u8', 'Ich – Einfach unverbesserlich 4')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                    
-                <div class="film-card" data-title="ES Kapitel 1" data-duration="8100">
-                    <img src="https://i.ibb.co/ZzKZN3J/IMG-0279.jpg" alt="ES Kapitel 1 Poster">
-                    <h2>ES Kapitel 1</h2>
-                    <p>Jahr: 2017</p>
-                    <p>Dauer: 2 h 15 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/0cbdr3jn56a5/RcgnAtr-oquitx9Qmsg9sQ/1728840786/0cbdr3jn56a5//master.m3u8', 'ES Kapitel 1')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="ES Kapitel 2" data-duration="10140">
-                    <img src="https://de.web.img2.acsta.net/pictures/19/07/26/16/16/5754760.jpg" alt="ES Kapitel 2 Poster">
-                    <h2>ES Kapitel 2</h2>
-                    <p>Jahr: 2019</p>
-                    <p>Dauer: 2 h 49 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/hx2et9cbhv/xU319ADHEiXkAfkIuoxmWA/1728842379/hx2et9cbhv//master.m3u8', 'ES Kapitel 2')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Blink Twice" data-duration="6120">
-                    <img src="https://cdn.kinocheck.com/i/wifrj8cvd8.jpg" alt="Blink Twice Poster">
-                    <h2>Blink Twice</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer: 1 h 42 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/ybkfbygd3e/oUU380YG7za79eDME2rzBg/1728839507/ybkfbygd3e//master.m3u8', 'Blink Twice')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Beetlejuice Beetlejuice="7620">
-                    <img src="https://cdn.kinocheck.com/i/onswv9asdw.jpg" alt="Beetlejuice Beetlejuice Poster">
-                    <h2>Beetlejuice</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer:  1 h 44 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/9mddo9tytfm/4YJCH8bhpTKfvKp6lbmHJg/1728832171/9mddo9tytfm//master.m3u8', 'Beetlejuice Beetlejuice')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Turtles All the Way Down="7620">
-                    <img src="https://www.kino-zeit.de/sites/default/files/2024-04/turtles_all_the_way_down_2024.jpg" alt="Turtles All the Way Down Poster">
-                    <h2>Turtles All the Way Down</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer:  1 h 51 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/e08p273d2wc/1veSGvnUb4QfEeQ0JmiURg/1728831306/e08p273d2wc//master.m3u8', 'Turtles All the Way Down')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Phantastische Tierwesen: Dumbledores Geheimnisse" data-duration="7620">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/3vuxt9zxso.jpg" alt="Phantastische Tierwesen: Dumbledores Geheimnisse Poster">
-                    <h2>Phantastische Tierwesen: Dumbledores Geheimnisse</h2>
-                    <p>Jahr: 2022</p>
-                    <p>Dauer:  2 h 23 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/qbtj8hkdf9/QfaXtFZgw2Lem_e7ZvXsiw/1728830924/qbtj8hkdf9//master.m3u8', 'Phantastische Tierwesen: Dumbledores Geheimnisse')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Deadpool & Wolverine" data-duration="7620">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/d3mx9y2anl.jpg" alt="Deadpool & Wolverine Poster">
-                    <h2>Deadpool & Wolverine</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer:  2 h 7 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/vh74qihcjvc/zzWPTyKzZ90t55yFb5ONjw/1728178184/vh74qihcjvc//master.m3u8', 'Deadpool & Wolverine')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="John Wick" data-duration="6060">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/pvatm0owmf.jpg" alt="John Wick Poster">
-                    <h2>John Wick</h2>
-                    <p>Jahr: 2014</p>
-                    <p>Dauer: 1 h 41 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/jnmljrug6l9/UMwOfUmTWiknnKfB-lpIbA/1725396613/jnmljrug6l9//master.m3u8', 'John Wick')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Elvis" data-duration="9540">
-                    <img src="https://cdn.kinocheck.com/i/j7g8i57dlw.jpg" alt="Elvis Poster">
-                    <h2>Elvis</h2>
-                    <p>Jahr: 2022</p>
-                    <p>Dauer: 2 h 39 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/42t6g8weimw/hhOzTyMWmzkPc5LTBQtCBg/1725303013/42t6g8weimw//master.m3u8', 'Elvis')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und der Stein der Weisen" data-duration="9120">
-                    <img src="https://i.ibb.co/wMLkNfK/Screenshot-2024-10-12-085419.png" alt="Harry Potter 1 Poster">
-                    <h2>Harry Potter und der Stein der Weisen</h2>
-                    <p>Jahr: 2001</p>
-                    <p>Dauer: 2 h 32 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/5uhykxfw6qv/OiGE2XFe27wTjEt0NI2BBg/1725396564/5uhykxfw6qv//master.m3u8', 'Harry Potter und der Stein der Weisen')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und die Kammer des Schreckens" data-duration="9120">
-                    <img src="https://i.ibb.co/VLs5F5D/Screenshot-2024-10-12-085428.png" alt="Harry Potter und die Kammer des Schreckens Poster">
-                    <h2>Harry Potter und die Kammer des Schreckens</h2>
-                    <p>Jahr: 2002</p>
-                    <p>Dauer: 2 h 38 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/psloo2chu8r/WD0huoGTcOe1KQfs6xgu1g/1728719546/psloo2chu8r//master.m3u8', 'Harry Potter und die Kammer des Schreckens')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Film Harry Potter und der Gefangene von Askaban" data-duration="9120">
-                    <img src="https://i.ibb.co/hVHv2vj/Screenshot-2024-10-12-085435.png" alt="Film Harry Potter und der Gefangene von Askaban Poster">
-                    <h2>Harry Potter und der Gefangene von Askaban</h2>
-                    <p>Jahr: 2004</p>
-                    <p>Dauer: 2 h 21 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/j5eu8b7qw5g/ZQMg8WWS6Bk0eUWrGPEkMA/1728719091/j5eu8b7qw5g//master.m3u8', 'Harry Potter und der Gefangene von Askaban')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und der Feuerkelch" data-duration="9120">
-                    <img src="https://i.ibb.co/H7YL8hc/Screenshot-2024-10-12-085443.png" alt="Harry Potter und der Feuerkelch Poster">
-                    <h2>Harry Potter und der Feuerkelch</h2>
-                    <p>Jahr: 2004</p>
-                    <p>Dauer: 2 h 21 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/ks9diqvjvpi/Bs7riTznM_DlwesAzSon9g/1728718863/ks9diqvjvpi//master.m3u8', 'Harry Potter und der Feuerkelch')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und der Orden des Phönix" data-duration="9120">
-                    <img src="https://i.ibb.co/dPRzFLw/Screenshot-2024-10-12-085451.png" alt="Harry Potter und der Orden des Phönix Poster">
-                    <h2>Harry Potter und der Orden des Phönix</h2>
-                    <p>Jahr: 2007</p>
-                    <p>Dauer: 2 h 18 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/c8makyiztqj/t8EFPLvNkqKeCymVRbpRlw/1728499048/c8makyiztqj//master.m3u8', 'Harry Potter und der Orden des Phönix')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und der Halbblutprinz" data-duration="9120">
-                    <img src="https://i.ibb.co/mvh4QqT/Screenshot-2024-10-12-085502.png" alt="Harry Potter und der Halbblutprinz Poster">
-                    <h2>Harry Potter und der Halbblutprinz</h2>
-                    <p>Jahr: 2009</p>
-                    <p>Dauer: 2 h 33 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/bgxu9d9qkcl/mJWCM2MOQ2MKkLzcGWGj5A/1728499256/bgxu9d9qkcl//master.m3u8', 'Harry Potter und der Halbblutprinz')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und die Heiligtümer des Todes – Teil 1" data-duration="9120">
-                    <img src="https://i.ibb.co/8NqZGSS/Screenshot-2024-10-12-085521.png" alt="Harry Potter und die Heiligtümer des Todes – Teil 1 Poster">
-                    <h2>Harry Potter und die Heiligtümer des Todes – Teil 1</h2>
-                    <p>Jahr: 2010</p>
-                    <p>Dauer: 2 h 26 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/kyfsdq9vz4j/HKrvaQz5uhEcKdqdVhmhzA/1728499344/kyfsdq9vz4j//master.m3u8', 'Harry Potter und die Heiligtümer des Todes – Teil 1')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Harry Potter und die Heiligtümer des Todes – Teil 2" data-duration="9120">
-                    <img src="https://i.ibb.co/RgstHcK/Screenshot-2024-10-12-085539.png" alt="Harry Potter und die Heiligtümer des Todes – Teil 2 Poster">
-                    <h2>Harry Potter und die Heiligtümer des Todes – Teil 2</h2>
-                    <p>Jahr: 2011</p>
-                    <p>Dauer: 2 h 1 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/tmknfnpbobg/CFc5QXIIyfjlwZtKUji4tQ/1728499471/tmknfnpbobg//master.m3u8', 'Harry Potter und die Heiligtümer des Todes – Teil 2')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="A Quiet Place: Tag Eins" data-duration="9150">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/byu6b224j7.jpg" alt="A Quiet Place: Tag Eins Poster">
-                    <h2>A Quiet Place: Tag Eins</h2>
-                    <p>Jahr: 2024</p>
-                    <p>Dauer: 1 h 39 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/x71xoesgd4m/0yzOMezycVN1SGfHIvnNYw/1728050148/x71xoesgd4m//master.m3u8', 'A Quiet Place: Tag Ein')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="A Quiet Place 2" data-duration="5787">
-                    <img src="https://cdn.kinocheck.com/i/w=1200/sjnlbqo4z5.jpg" alt="A Quiet Place 2  Poster">
-                    <h2>A Quiet Place 2</h2>
-                    <p>Jahr: 2020</p>
-                    <p>Dauer: 1 h 37 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/fyv99drtzr/oKHWx3qg1XA1-H_9O3m6Sg/1728219645/fyv99drtzr//master.m3u8', 'A Quiet Place 2')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="A Quiet Place" data-duration="5787">
-                    <img src="https://cdn.kinocheck.com/i/jjttfkyc9f.jpg" alt="A Quiet Place  Poster">
-                    <h2>A Quiet Place</h2>
-                    <p>Jahr: 2018</p>
-                    <p>Dauer: 1 h 30 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/cjof4n8tc4a/oprMiu59ELhfCmjapnu8Fw/1728832637/cjof4n8tc4a//master.m3u8', 'A Quiet Place ')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="film-card" data-title="Culpa Mia – Meine Schuld" data-duration="5787">
-                    <img src="https://cdn.kinocheck.com/i/y9tic8091g.jpg" alt="Culpa Mia – Meine Schuld Poster">
-                    <h2>Culpa Mia – Meine Schuld</h2>
-                    <p>Jahr: 2023</p>
-                    <p>Dauer: 1 h 57 min</p>
-                    <button onclick="openVideoPlayer('https://3jtpuy07im.swiftload.io/serve/3/73rdh0ix2tg/btApxqlyxQeqOpTl0BQi9A/1728493350/73rdh0ix2tg//master.m3u8', 'Culpa Mia – Meine Schuld')">Film ansehen</button>
-                    <div class="progress-bar"></div>
-                </div>
-            </div>
-        </main>
+        <div id="pullToRefresh">
+            <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
+        </div>
+        <div class="film-grid" id="filmGrid"></div>
     </div>
-  <script>
+    <div id="player">
+        <button id="closePlayer"><i class="fas fa-times"></i></button>
+        <video id="videoPlayer" controls></video>
+    </div>
+    <div id="resumePrompt">
+        <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
+        <button onclick="resumePlayback(true)">Ja</button>
+        <button onclick="resumePlayback(false)">Nein</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        let catalog = null;
+        let currentFilm = null;
+        let startY = 0;
+        let pullDistance = 0;
+        const container = document.querySelector('.container');
+        const catalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
+
+        async function loadCatalog() {
+            try {
+                const response = await fetch(catalogUrl);
+                catalog = await response.json();
+                renderFilms(catalog.films);
+            } catch (error) {
+                console.error('Fehler beim Laden des Katalogs:', error);
+                alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
+            }
+        }
+
+        function renderFilms(films) {
+            const filmGrid = document.getElementById('filmGrid');
+            filmGrid.innerHTML = '';
+            films.forEach(film => {
+                const card = document.createElement('div');
+                card.className = 'film-card';
+                card.innerHTML = `
+                    <img src="${film.poster}" alt="${film.title}">
+                    <div class="film-info">
+                        <h3 class="film-title">${film.title}</h3>
+                    </div>
+                `;
+                card.addEventListener('click', () => playFilm(film));
+                filmGrid.appendChild(card);
+            });
+        }
+
+        function playFilm(film) {
+            currentFilm = film;
+            const player = document.getElementById('player');
+            const video = document.getElementById('videoPlayer');
+            const savedTime = localStorage.getItem(`filmProgress_${film.id}`);
+
+            if (savedTime) {
+                document.getElementById('resumePrompt').style.display = 'block';
+            } else {
+                startPlayback();
+            }
+        }
+
+        function resumePlayback(resume) {
+            document.getElementById('resumePrompt').style.display = 'none';
+            startPlayback(resume);
+        }
+
+        function startPlayback(resume = false) {
+            const player = document.getElementById('player');
+            const video = document.getElementById('videoPlayer');
+            player.style.display = 'block';
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(currentFilm.streamUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    if (resume) {
+                        const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
+                        video.currentTime = savedTime ? parseFloat(savedTime) : 0;
+                    }
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = currentFilm.streamUrl;
+                if (resume) {
+                    const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
+                    video.currentTime = savedTime ? parseFloat(savedTime) : 0;
+                }
+                video.play();
+            }
+
+            video.addEventListener('timeupdate', function() {
+                localStorage.setItem(`filmProgress_${currentFilm.id}`, video.currentTime);
+            });
+        }
+
+        document.getElementById('closePlayer').addEventListener('click', () => {
+            const player = document.getElementById('player');
+            const video = document.getElementById('videoPlayer');
+            player.style.display = 'none';
+            video.pause();
+            video.src = '';
+            currentFilm = null;
+        });
+
+        document.getElementById('searchBar').addEventListener('input', searchFilms);
+
         function searchFilms() {
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const filmCards = document.getElementsByClassName('film-card');
-            
-            for (let card of filmCards) {
-                const title = card.getAttribute('data-title').toLowerCase();
-                if (title.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+            const filteredFilms = catalog.films.filter(film => 
+                film.title.toLowerCase().includes(searchTerm)
+            );
+            renderFilms(filteredFilms);
+        }
+
+        // Pull-to-Refresh Funktionalität
+        container.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].pageY;
+            pullDistance = 0;
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            const y = e.touches[0].pageY;
+            pullDistance = y - startY;
+            if (container.scrollTop === 0 && pullDistance > 0 && pullDistance < 90) {
+                document.body.classList.add('refreshing');
+                document.getElementById('pullToRefresh').style.marginTop = `${pullDistance - 40}px`;
+                e.preventDefault();
             }
-        }
+        });
 
-        function openVideoPlayer(m3u8Url, title) {
-            const savedTime = Cookies.get(title);
-            const playerWindow = window.open('', '_blank');
-            playerWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="de">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Video Player - ${title}</title>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.1.5/hls.min.js"><\/script>
-                    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"><\/script>
-                    <style>
-                        body { margin: 0; padding: 0; background-color: #000; }
-                        #videoPlayer { width: 100%; height: 100vh; }
-                        #resumePrompt, #qualitySelector { 
-                            position: fixed; 
-                            top: 50%; 
-                            left: 50%; 
-                            transform: translate(-50%, -50%); 
-                            background-color: rgba(0,0,0,0.8); 
-                            color: white; 
-                            padding: 20px; 
-                            border-radius: 10px; 
-                            text-align: center; 
-                        }
-                        #resumePrompt button, #qualitySelector button { 
-                            margin: 10px; 
-                            padding: 5px 10px; 
-                            cursor: pointer; 
-                        }
-                        #qualityBtn {
-                            position: absolute;
-                            top: 10px;
-                            right: 10px;
-                            z-index: 1000;
-                            background-color: rgba(0,0,0,0.5);
-                            color: white;
-                            border: none;
-                            padding: 5px 10px;
-                            cursor: pointer;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <video id="videoPlayer" controls></video>
-                    <button id="qualityBtn" onclick="toggleQualitySelector()">Qualität</button>
-                    <div id="resumePrompt" style="display:none;">
-                        <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
-                        <button onclick="resumePlayback(true)">Ja</button>
-                        <button onclick="resumePlayback(false)">Nein</button>
-                    </div>
-                    <div id="qualitySelector" style="display:none;">
-                        <p>Wähle die Videoqualität:</p>
-                        <button onclick="setQuality('auto')">Auto</button>
-                        <div id="qualityOptions"></div>
-                    </div>
-                    <script>
-                    const video = document.getElementById('videoPlayer');
-                        const m3u8Url = '${m3u8Url}';
-                        const savedTime = ${savedTime || 0};
-                        let hls;
-                        let currentQuality = 'auto';
-
-                        function initializePlayer() {
-                            if (Hls.isSupported()) {
-                                hls = new Hls({
-                                    autoStartLoad: false
-                                });
-                                hls.loadSource(m3u8Url);
-                                hls.attachMedia(video);
-                                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                                    const qualityLevels = hls.levels;
-                                    const qualityOptions = document.getElementById('qualityOptions');
-                                    qualityOptions.innerHTML = '';
-                                    qualityLevels.forEach((level, index) => {
-                                        const button = document.createElement('button');
-                                        button.innerText = level.height + 'p';
-                                        button.onclick = () => setQuality(index);
-                                        qualityOptions.appendChild(button);
-                                    });
-                                    hls.startLoad();
-                                });
-                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                                video.src = m3u8Url;
-                            }
-                        }
-
-                        function resumePlayback(resume) {
-                            document.getElementById('resumePrompt').style.display = 'none';
-                            if (resume) {
-                                video.currentTime = savedTime;
-                            }
-                            video.play();
-                        }
-
-                        function toggleQualitySelector() {
-                            const selector = document.getElementById('qualitySelector');
-                            selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
-                        }
-
-                        function setQuality(quality) {
-                            if (quality === 'auto') {
-                                hls.currentLevel = -1;
-                                currentQuality = 'auto';
-                            } else {
-                                hls.currentLevel = quality;
-                                currentQuality = hls.levels[quality].height + 'p';
-                            }
-                            updateQualityButton();
-                            toggleQualitySelector();
-                        }
-
-                        function updateQualityButton() {
-                            document.getElementById('qualityBtn').innerText = 'Qualität: ' + currentQuality;
-                        }
-
-                        initializePlayer();
-
-                        if (savedTime > 0) {
-                            document.getElementById('resumePrompt').style.display = 'block';
-                        } else {
-                            video.play();
-                        }
-
-                        video.addEventListener('timeupdate', function() {
-                            Cookies.set('${title}', video.currentTime, { expires: 365 });
-                        });
-
-                        updateQualityButton();
-                    <\/script>
-                </body>
-                </html>
-            `);
-            playerWindow.document.close();
-        }
-
-        function updateProgressBars() {
-            const filmCards = document.getElementsByClassName('film-card');
-            
-            for (let card of filmCards) {
-                const title = card.getAttribute('data-title');
-                const duration = parseInt(card.getAttribute('data-duration'));
-                const savedTime = Cookies.get(title);
-                
-                if (savedTime) {
-                    const progress = (savedTime / duration) * 100;
-                    const progressBar = card.querySelector('.progress-bar');
-                    progressBar.style.width = `${progress}%`;
-                }
+        container.addEventListener('touchend', () => {
+            if (pullDistance > 60 && container.scrollTop === 0) {
+                loadCatalog();
             }
-        }
+            document.body.classList.remove('refreshing');
+            document.getElementById('pullToRefresh').style.marginTop = '-40px';
+        });
 
-        // Aktualisiere die Fortschrittsbalken beim Laden der Seite
-        window.onload = updateProgressBars;
+        // Beim Start der App
+        loadCatalog();
     </script>
-    <footer>
-    <p>&copy; 2024 Alle Rechte vorbehalten | Website Version 1.25 Patch 3  Neue Harry-Potter-Bilder und alle Filme komplett</p>
-</footer>
 </body>
 </html>
