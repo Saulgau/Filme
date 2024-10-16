@@ -6,93 +6,103 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#141414">
-    <link rel="icon" type="image/x-icon" href="/path/to/favicon.ico">
-
-    <!-- For iOS devices -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-
-    <!-- For Android devices -->
-    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+        :root {
+            --header-height: 60px;
+        }
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
             background-color: #141414;
             color: #fff;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .container {
-            padding: 20px;
-            padding-top: 120px;
-            height: calc(100% - 120px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgba(20,20,20,0.8);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
+            height: var(--header-height);
+            background-color: rgba(20,20,20,0.8);
             backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
         }
         h1 {
-            margin: 0;
             font-size: 24px;
+            margin-right: 20px;
         }
         #searchBar {
             flex-grow: 1;
-            margin: 0 20px;
-            padding: 8px;
+            background-color: rgba(255,255,255,0.2);
             border: none;
             border-radius: 20px;
-            background-color: rgba(255,255,255,0.2);
+            padding: 8px 15px;
             color: #fff;
+            font-size: 16px;
+        }
+        #searchBar::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .container {
+            margin-top: var(--header-height);
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #pullToRefresh {
+            text-align: center;
+            padding: 10px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
         }
         .film-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
+            justify-content: center;
         }
         .film-card {
             position: relative;
-            overflow: hidden;
             border-radius: 8px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            aspect-ratio: 2 / 3;
+            background-color: #2a2a2a;
         }
         .film-card:hover, .film-card:focus {
             transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            outline: none;
         }
         .film-card img {
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
+            object-fit: cover;
         }
         .film-info {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.7);
             padding: 10px;
+            background: rgba(0,0,0,0.7);
         }
         .film-title {
-            margin: 0;
             font-size: 14px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         #player {
             position: fixed;
@@ -116,7 +126,6 @@
             border: none;
             color: #fff;
             font-size: 24px;
-            z-index: 2001;
             cursor: pointer;
         }
         #resumePrompt {
@@ -128,57 +137,38 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            z-index: 2002;
+            z-index: 2001;
             display: none;
         }
         #resumePrompt button {
             margin: 10px;
             padding: 10px 20px;
-            cursor: pointer;
             background: #e50914;
             color: #fff;
             border: none;
             border-radius: 4px;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
         }
-        #resumePrompt button:hover, #resumePrompt button:focus {
-            background: #f40612;
-            outline: none;
-        }
-        #pullToRefresh {
-            text-align: center;
-            height: 40px;
-            line-height: 40px;
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            background-color: rgba(20,20,20,0.8);
-            z-index: 999;
-            transition: transform 0.3s ease;
-            transform: translateY(-100%);
-        }
-        .refreshing #pullToRefresh {
-            transform: translateY(0);
-        }
-
-        /* Styles für große Bildschirme (Fernseher) */
-        @media (min-width: 1200px) {
+        
+        /* Responsive Design */
+        @media (min-width: 768px) {
             .film-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
-            .film-card {
-                max-width: 300px;
-                margin: 0 auto;
+        }
+        @media (min-width: 1200px) {
+            .film-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        /* For TV screens */
+        @media (min-width: 1920px) {
+            .film-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
             .film-title {
                 font-size: 18px;
             }
-        }
-
-        /* Fokus-Stil für Fernbedienungsnavigation */
-        .film-card:focus {
-            outline: 3px solid #e50914;
         }
     </style>
 </head>
@@ -187,10 +177,10 @@
         <h1>FilmFrei</h1>
         <input type="text" id="searchBar" placeholder="Film suchen...">
     </header>
-    <div id="pullToRefresh">
-        <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
-    </div>
     <div class="container">
+        <div id="pullToRefresh">
+            <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
+        </div>
         <div class="film-grid" id="filmGrid"></div>
     </div>
     <div id="player">
@@ -211,14 +201,12 @@
         const container = document.querySelector('.container');
         const pullToRefresh = document.getElementById('pullToRefresh');
         const catalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
-        let currentFocus = -1;
 
         async function loadCatalog() {
             try {
                 const response = await fetch(catalogUrl);
                 catalog = await response.json();
                 renderFilms(catalog.films);
-                setupKeyboardNavigation();
             } catch (error) {
                 console.error('Fehler beim Laden des Katalogs:', error);
                 alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
@@ -231,8 +219,6 @@
             films.forEach((film, index) => {
                 const card = document.createElement('div');
                 card.className = 'film-card';
-                card.tabIndex = 0;
-                card.setAttribute('data-index', index);
                 card.innerHTML = `
                     <img src="${film.poster}" alt="${film.title}">
                     <div class="film-info">
@@ -240,11 +226,6 @@
                     </div>
                 `;
                 card.addEventListener('click', () => playFilm(film));
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        playFilm(film);
-                    }
-                });
                 filmGrid.appendChild(card);
             });
         }
@@ -317,64 +298,27 @@
         }
 
         // Pull-to-Refresh Funktionalität
+        let touchStartY = 0;
         container.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].pageY;
-            pullDistance = 0;
+            touchStartY = e.touches[0].clientY;
         });
 
         container.addEventListener('touchmove', (e) => {
-            const y = e.touches[0].pageY;
-            pullDistance = y - startY;
+            const touchY = e.touches[0].clientY;
+            const pullDistance = touchY - touchStartY;
             if (container.scrollTop === 0 && pullDistance > 0 && pullDistance < 90) {
-                document.body.classList.add('refreshing');
-                pullToRefresh.style.transform = `translateY(${pullDistance - 40}px)`;
-                e.preventDefault();
+                pullToRefresh.style.opacity = pullDistance / 90;
             }
         });
 
-        container.addEventListener('touchend', () => {
-            if (pullDistance > 60 && container.scrollTop === 0) {
+        container.addEventListener('touchend', (e) => {
+            const touchY = e.changedTouches[0].clientY;
+            const pullDistance = touchY - touchStartY;
+            if (container.scrollTop === 0 && pullDistance > 60) {
                 loadCatalog();
             }
-            document.body.classList.remove('refreshing');
-            pullToRefresh.style.transform = 'translateY(-100%)';
+            pullToRefresh.style.opacity = 0;
         });
-
-        function setupKeyboardNavigation() {
-            document.addEventListener('keydown', (e) => {
-                const filmCards = document.querySelectorAll('.film-card');
-                const totalCards = filmCards.length;
-                const columns = Math.floor(document.querySelector('.film-grid').clientWidth / filmCards[0].offsetWidth);
-
-                switch(e.key) {
-                    case 'ArrowRight':
-                        if (currentFocus < totalCards - 1) currentFocus++;
-                        break;
-                    case 'ArrowLeft':
-                        if (currentFocus > 0) currentFocus--;
-                        break;
-                    case 'ArrowDown':
-                        if (currentFocus + columns < totalCards) currentFocus += columns;
-                        break;
-                    case 'ArrowUp':
-                        if (currentFocus - columns >= 0) currentFocus -= columns;
-                        break;
-                    case 'Enter':
-                        if (currentFocus >= 0 && currentFocus < totalCards) {
-                            filmCards[currentFocus].click();
-                        }
-                        break;
-                    default:
-                        return;
-                }
-
-                if (currentFocus >= 0 && currentFocus < totalCards) {
-                    filmCards[currentFocus].focus();
-                }
-
-                e.preventDefault();
-            });
-        }
 
         // Beim Start der App
         loadCatalog();
