@@ -29,8 +29,8 @@
         }
         .container {
             padding: 20px;
-            padding-top: 80px;
-            height: calc(100% - 80px);
+            padding-top: 120px; /* Increased to accommodate header and pull-to-refresh */
+            height: calc(100% - 120px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -78,6 +78,7 @@
         .film-card img {
             width: 100%;
             height: auto;
+            display: block; /* Ensures no extra space below image */
         }
         .film-info {
             position: absolute;
@@ -145,11 +146,17 @@
             text-align: center;
             height: 40px;
             line-height: 40px;
-            margin-top: -40px;
-            transition: margin-top 0.3s ease;
+            position: fixed;
+            top: 60px; /* Position below the header */
+            left: 0;
+            right: 0;
+            background-color: rgba(20,20,20,0.8);
+            z-index: 999;
+            transition: transform 0.3s ease;
+            transform: translateY(-100%);
         }
         .refreshing #pullToRefresh {
-            margin-top: 0;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -158,10 +165,10 @@
         <h1>FilmFrei</h1>
         <input type="text" id="searchBar" placeholder="Film suchen...">
     </header>
+    <div id="pullToRefresh">
+        <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
+    </div>
     <div class="container">
-        <div id="pullToRefresh">
-            <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
-        </div>
         <div class="film-grid" id="filmGrid"></div>
     </div>
     <div id="player">
@@ -180,6 +187,7 @@
         let startY = 0;
         let pullDistance = 0;
         const container = document.querySelector('.container');
+        const pullToRefresh = document.getElementById('pullToRefresh');
         const catalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
 
         async function loadCatalog() {
@@ -288,7 +296,7 @@
             pullDistance = y - startY;
             if (container.scrollTop === 0 && pullDistance > 0 && pullDistance < 90) {
                 document.body.classList.add('refreshing');
-                document.getElementById('pullToRefresh').style.marginTop = `${pullDistance - 40}px`;
+                pullToRefresh.style.transform = `translateY(${pullDistance - 40}px)`;
                 e.preventDefault();
             }
         });
@@ -298,7 +306,7 @@
                 loadCatalog();
             }
             document.body.classList.remove('refreshing');
-            document.getElementById('pullToRefresh').style.marginTop = '-40px';
+            pullToRefresh.style.transform = 'translateY(-100%)';
         });
 
         // Beim Start der App
