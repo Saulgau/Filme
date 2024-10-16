@@ -8,13 +8,13 @@
     <meta name="theme-color" content="#141414">
     <link rel="icon" type="image/x-icon" href="/path/to/favicon.ico">
 
-    <!-- For iOS devices -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+<!-- For iOS devices -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
 
-    <!-- For Android devices -->
-    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+<!-- For Android devices -->
+<link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -29,8 +29,8 @@
         }
         .container {
             padding: 20px;
-            padding-top: 120px; /* Increased to accommodate header and pull-to-refresh */
-            height: calc(100% - 120px);
+            padding-top: 80px;
+            height: calc(100% - 80px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -78,7 +78,6 @@
         .film-card img {
             width: 100%;
             height: auto;
-            display: block; /* Ensures no extra space below image */
         }
         .film-info {
             position: absolute;
@@ -146,17 +145,11 @@
             text-align: center;
             height: 40px;
             line-height: 40px;
-            position: fixed;
-            top: 60px; /* Position below the header */
-            left: 0;
-            right: 0;
-            background-color: rgba(20,20,20,0.8);
-            z-index: 999;
-            transition: transform 0.3s ease;
-            transform: translateY(-100%);
+            margin-top: -40px;
+            transition: margin-top 0.3s ease;
         }
         .refreshing #pullToRefresh {
-            transform: translateY(0);
+            margin-top: 0;
         }
     </style>
 </head>
@@ -165,10 +158,10 @@
         <h1>FilmFrei</h1>
         <input type="text" id="searchBar" placeholder="Film suchen...">
     </header>
-    <div id="pullToRefresh">
-        <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
-    </div>
     <div class="container">
+        <div id="pullToRefresh">
+            <i class="fas fa-sync"></i> Zum Aktualisieren nach unten ziehen
+        </div>
         <div class="film-grid" id="filmGrid"></div>
     </div>
     <div id="player">
@@ -187,17 +180,16 @@
         let startY = 0;
         let pullDistance = 0;
         const container = document.querySelector('.container');
-        const pullToRefresh = document.getElementById('pullToRefresh');
-        const catalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
+        const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
 
-        async function loadCatalog() {
+        async function loadCatalog(url) {
             try {
-                const response = await fetch(catalogUrl);
+                const response = await fetch(url);
                 catalog = await response.json();
                 renderFilms(catalog.films);
             } catch (error) {
                 console.error('Fehler beim Laden des Katalogs:', error);
-                alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
+                alert('Fehler beim Laden des Katalogs. Bitte überprüfen Sie die URL und versuchen Sie es erneut.');
             }
         }
 
@@ -296,21 +288,25 @@
             pullDistance = y - startY;
             if (container.scrollTop === 0 && pullDistance > 0 && pullDistance < 90) {
                 document.body.classList.add('refreshing');
-                pullToRefresh.style.transform = `translateY(${pullDistance - 40}px)`;
+                document.getElementById('pullToRefresh').style.marginTop = `${pullDistance - 40}px`;
                 e.preventDefault();
             }
         });
 
         container.addEventListener('touchend', () => {
             if (pullDistance > 60 && container.scrollTop === 0) {
-                loadCatalog();
+                refreshCatalog();
             }
             document.body.classList.remove('refreshing');
-            pullToRefresh.style.transform = 'translateY(-100%)';
+            document.getElementById('pullToRefresh').style.marginTop = '-40px';
         });
 
+        async function refreshCatalog() {
+            await loadCatalog(defaultCatalogUrl);
+        }
+
         // Beim Start der App
-        loadCatalog();
+        loadCatalog(defaultCatalogUrl);
     </script>
 </body>
 </html>
