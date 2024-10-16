@@ -11,6 +11,7 @@
     <style>
         :root {
             --header-height: 60px;
+            --max-card-width: 200px;
         }
         * {
             box-sizing: border-box;
@@ -44,6 +45,7 @@
         }
         #searchBar {
             flex-grow: 1;
+            max-width: 600px;
             background-color: rgba(255,255,255,0.2);
             border: none;
             border-radius: 20px;
@@ -72,6 +74,8 @@
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
             justify-content: center;
+            max-width: 1800px;
+            margin: 0 auto;
         }
         .film-card {
             position: relative;
@@ -80,6 +84,8 @@
             transition: transform 0.3s ease;
             aspect-ratio: 2 / 3;
             background-color: #2a2a2a;
+            max-width: var(--max-card-width);
+            margin: 0 auto;
         }
         .film-card:hover, .film-card:focus {
             transform: scale(1.05);
@@ -153,21 +159,21 @@
         /* Responsive Design */
         @media (min-width: 768px) {
             .film-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
         @media (min-width: 1200px) {
             .film-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
         }
-        /* For TV screens */
+        /* For TV screens and large monitors */
         @media (min-width: 1920px) {
             .film-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             }
             .film-title {
-                font-size: 18px;
+                font-size: 16px;
             }
         }
     </style>
@@ -220,7 +226,7 @@
                 const card = document.createElement('div');
                 card.className = 'film-card';
                 card.innerHTML = `
-                    <img src="${film.poster}" alt="${film.title}">
+                    <img src="${film.poster}" alt="${film.title}" loading="lazy">
                     <div class="film-info">
                         <h3 class="film-title">${film.title}</h3>
                     </div>
