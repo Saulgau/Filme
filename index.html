@@ -2,9 +2,21 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Standard Favicon -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
+    
+    <!-- iOS Web App meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FilmFrei">
+    
+    <!-- iOS Web App icon (using the same favicon) -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    
     <style>
         :root {
             --primary-color: #e50914;
@@ -19,11 +31,16 @@
             padding: 0;
         }
         
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
+            /* overscroll-behavior-y: none; wurde entfernt */
         }
         
         .container {
@@ -168,6 +185,13 @@
         
         #resumePrompt button:hover {
             background: #f40612;
+        }
+        
+        button, 
+        input[type="button"], 
+        input[type="submit"] {
+            min-height: 44px;
+            min-width: 44px;
         }
         
         @media (max-width: 768px) {
@@ -316,6 +340,20 @@
         document.getElementById('refreshLink').addEventListener('click', (e) => {
             e.preventDefault();
             loadCatalog(defaultCatalogUrl);
+        });
+
+        // Der folgende Event Listener wurde entfernt, um Scrolling zu ermöglichen
+        /*
+        document.addEventListener('touchmove', function(event) {
+            event.preventDefault();
+        }, { passive: false });
+        */
+
+        // Reload page when returning from background on iOS
+        document.addEventListener("visibilitychange", function() {
+            if (!document.hidden) {
+                window.location.reload();
+            }
         });
 
         // Beim Start der Seite
