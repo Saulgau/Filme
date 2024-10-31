@@ -6,16 +6,9 @@
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Standard Favicon -->
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
-    
-    <!-- iOS Web App meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FilmFrei">
-    
-    <!-- iOS Web App icon (using the same favicon) -->
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
     
     <style>
         :root {
@@ -40,7 +33,6 @@
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            /* overscroll-behavior-y: none; wurde entfernt */
         }
         
         .container {
@@ -214,154 +206,133 @@
         }
     </style>
 </head>
-<script type="text/javascript"> document.umnicoWidgetHash = 'daa4caccfd0bbaa52a04548af4f811b8'; var x = document.createElement('script'); x.src = 'https://umnico.com/assets/widget-loader.js'; x.type = 'text/javascript'; x.charset = 'UTF-8'; x.async = true; document.body.appendChild(x); </script>
 <body>
 <header>
     <div class="header-content">
         <div style="display: flex; align-items: center; gap: 20px;">
             <a href="#" class="logo" id="refreshLink">FilmFrei</a>
-<a href="https://saulgau.github.io/Serien/" class="logo" style="font-size: 16px; background: var(--primary-color); padding: 8px 15px; border-radius: 20px; transition: opacity 0.3s; color: #ffffff;">SerienFrei Beta</a>
+            <a href="https://saulgau.github.io/Serien/" class="logo" style="font-size: 16px; background: var(--primary-color); padding: 8px 15px; border-radius: 20px; transition: opacity 0.3s; color: #ffffff;">SerienFrei Beta</a>
         </div>
         <input type="text" id="searchBar" placeholder="Film suchen...">
     </div>
 </header>
     
-    <div class="container">
-        <div class="film-grid" id="filmGrid"></div>
-    </div>
+<div class="container">
+    <div class="film-grid" id="filmGrid"></div>
+</div>
     
-    <div id="player">
-        <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <video id="videoPlayer" controls></video>
-    </div>
+<div id="player">
+    <button id="closePlayer"><i class="fas fa-times"></i></button>
+    <video id="videoPlayer" controls></video>
+</div>
     
-    <div id="resumePrompt">
-        <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
-        <button onclick="resumePlayback(true)">Ja</button>
-        <button onclick="resumePlayback(false)">Nein</button>
-    </div>
+<div id="resumePrompt">
+    <p>Möchtest du dort fortfahren, wo du aufgehört hast?</p>
+    <button onclick="resumePlayback(true)">Ja</button>
+    <button onclick="resumePlayback(false)">Nein</button>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        let catalog = null;
-        let currentFilm = null;
-        const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
+<script>
+    let catalog = null;
+    let currentFilm = null;
+    const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
 
-        async function loadCatalog(url) {
-            try {
-                const response = await fetch(url);
-                catalog = await response.json();
-                renderFilms(catalog.films);
-            } catch (error) {
-                console.error('Fehler beim Laden des Katalogs:', error);
-                alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
-            }
+    async function loadCatalog(url) {
+        try {
+            const response = await fetch(url);
+            catalog = await response.json();
+            renderFilms(catalog.films);
+        } catch (error) {
+            console.error('Fehler beim Laden des Katalogs:', error);
+            alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
         }
+    }
 
-        function renderFilms(films) {
-            const filmGrid = document.getElementById('filmGrid');
-            filmGrid.innerHTML = '';
-            films.forEach(film => {
-                const card = document.createElement('div');
-                card.className = 'film-card';
-                card.innerHTML = `
-                    <img src="${film.poster}" alt="${film.title}">
-                    <div class="film-info">
-                        <h3 class="film-title">${film.title}</h3>
-                        <p class="film-year">${film.year || 'Unbekanntes Jahr'}</p>
-                    </div>
-                `;
-                card.addEventListener('click', () => playFilm(film));
-                filmGrid.appendChild(card);
-            });
-        }
-
-        function playFilm(film) {
-            currentFilm = film;
-            const savedTime = localStorage.getItem(`filmProgress_${film.id}`);
-
-            if (savedTime) {
-                document.getElementById('resumePrompt').style.display = 'block';
-            } else {
-                startPlayback();
-            }
-        }
-
-        function resumePlayback(resume) {
-            document.getElementById('resumePrompt').style.display = 'none';
-            startPlayback(resume);
-        }
-
-        function startPlayback(resume = false) {
-            const player = document.getElementById('player');
-            const video = document.getElementById('videoPlayer');
-            player.style.display = 'block';
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(currentFilm.streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    if (resume) {
-                        const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
-                        video.currentTime = savedTime ? parseFloat(savedTime) : 0;
-                    }
-                    video.play();
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = currentFilm.streamUrl;
-                if (resume) {
-                    const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
-                    video.currentTime = savedTime ? parseFloat(savedTime) : 0;
-                }
-                video.play();
-            }
-
-            video.addEventListener('timeupdate', function() {
-                localStorage.setItem(`filmProgress_${currentFilm.id}`, video.currentTime);
-            });
-        }
-
-        document.getElementById('closePlayer').addEventListener('click', () => {
-            const player = document.getElementById('player');
-            const video = document.getElementById('videoPlayer');
-            player.style.display = 'none';
-            video.pause();
-            video.src = '';
-            currentFilm = null;
+    function renderFilms(films) {
+        const filmGrid = document.getElementById('filmGrid');
+        filmGrid.innerHTML = '';
+        films.forEach(film => {
+            const card = document.createElement('div');
+            card.className = 'film-card';
+            card.innerHTML = `
+                <img src="${film.poster}" alt="${film.title}">
+                <div class="film-info">
+                    <h3 class="film-title">${film.title}</h3>
+                    <p class="film-year">${film.year || 'Unbekanntes Jahr'}</p>
+                </div>
+            `;
+            card.addEventListener('click', () => playFilm(film));
+            filmGrid.appendChild(card);
         });
+    }
 
-        document.getElementById('searchBar').addEventListener('input', searchFilms);
+    function playFilm(film) {
+        currentFilm = film;
+        const savedTime = localStorage.getItem(`filmProgress_${film.id}`);
 
-        function searchFilms() {
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const filteredFilms = catalog.films.filter(film => 
-                film.title.toLowerCase().includes(searchTerm)
-            );
-            renderFilms(filteredFilms);
+        if (savedTime) {
+            document.getElementById('resumePrompt').style.display = 'block';
+        } else {
+            startPlayback();
         }
+    }
 
-        document.getElementById('refreshLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadCatalog(defaultCatalogUrl);
+    function resumePlayback(resume) {
+        document.getElementById('resumePrompt').style.display = 'none';
+        startPlayback(resume);
+    }
+
+    function startPlayback(resume = false) {
+        const player = document.getElementById('player');
+        const video = document.getElementById('videoPlayer');
+        
+        player.style.display = 'block';
+        video.src = currentFilm.streamUrl;
+        
+        if (resume) {
+            const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
+            video.currentTime = savedTime ? parseFloat(savedTime) : 0;
+        }
+        
+        video.play();
+
+        video.addEventListener('timeupdate', function() {
+            localStorage.setItem(`filmProgress_${currentFilm.id}`, video.currentTime);
         });
+    }
 
-        // Der folgende Event Listener wurde entfernt, um Scrolling zu ermöglichen
-        /*
-        document.addEventListener('touchmove', function(event) {
-            event.preventDefault();
-        }, { passive: false });
-        */
+    document.getElementById('closePlayer').addEventListener('click', () => {
+        const player = document.getElementById('player');
+        const video = document.getElementById('videoPlayer');
+        player.style.display = 'none';
+        video.pause();
+        video.src = '';
+        currentFilm = null;
+    });
 
-        // Reload page when returning from background on iOS
-        document.addEventListener("visibilitychange", function() {
-            if (!document.hidden) {
-                window.location.reload();
-            }
-        });
+    document.getElementById('searchBar').addEventListener('input', searchFilms);
 
-        // Beim Start der Seite
+    function searchFilms() {
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+        const filteredFilms = catalog.films.filter(film => 
+            film.title.toLowerCase().includes(searchTerm)
+        );
+        renderFilms(filteredFilms);
+    }
+
+    document.getElementById('refreshLink').addEventListener('click', (e) => {
+        e.preventDefault();
         loadCatalog(defaultCatalogUrl);
-    </script>
+    });
+
+    document.addEventListener("visibilitychange", function() {
+        if (!document.hidden) {
+            window.location.reload();
+        }
+    });
+
+    // Beim Start der Seite
+    loadCatalog(defaultCatalogUrl);
+</script>
 </body>
 </html>
