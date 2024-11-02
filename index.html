@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.css" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet"/>
     
     <style>
         :root {
@@ -32,7 +32,6 @@
             line-height: 1.6;
         }
         
-        /* Stil für den Server-Hinweis */
         .server-notice {
             position: fixed;
             top: 50%;
@@ -187,8 +186,8 @@
             z-index: 2000;
             display: none;
         }
-        
-        .dplayer {
+
+        .video-js {
             width: 100% !important;
             height: 100% !important;
         }
@@ -249,13 +248,15 @@
     
     <div id="player">
         <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <div id="dplayer"></div>
+        <video id="videoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="100%" height="100%">
+            <p class="vjs-no-js">
+                Um dieses Video anzusehen, aktivieren Sie bitte JavaScript und erwägen Sie ein Upgrade auf einen Webbrowser, der HTML5-Video unterstützt.
+            </p>
+        </video>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
     <script>
-        // Globale Variablen
         let catalog = null;
         let currentFilm = null;
         let player = null;
@@ -272,16 +273,22 @@
             document.getElementById('serverNotice').style.display = 'none';
         }
 
-        // Warten bis das DOM vollständig geladen ist
         document.addEventListener('DOMContentLoaded', function() {
-            // Server-Hinweis anzeigen
             showServerNotice();
-            
-            // Event Listener Setup
             setupEventListeners();
-            // Katalog laden
+            initVideoPlayer();
             loadCatalog(defaultCatalogUrl);
         });
+
+        function initVideoPlayer() {
+            player = videojs('videoPlayer', {
+                fluid: true,
+                controls: true,
+                autoplay: true,
+                preload: 'auto',
+                playbackRates: [0.5, 1, 1.5, 2]
+            });
+        }
 
         function setupEventListeners() {
             const closePlayerBtn = document.getElementById('closePlayer');
@@ -290,8 +297,8 @@
                     const playerContainer = document.getElementById('player');
                     playerContainer.style.display = 'none';
                     if (player) {
-                        player.destroy();
-                        player = null;
+                        player.pause();
+                        player.src('');
                     }
                     currentFilm = null;
                 });
@@ -317,42 +324,34 @@
             });
         }
 
-        function initPlayer(url) {
-            if (player) {
-                player.destroy();
-            }
-
-            const dp = new DPlayer({
-                container: document.getElementById('dplayer'),
-                screenshot: true,
-                video: {
-                    url: url,
-                    type: 'auto'
-                },
-                autoplay: true
-            });
-
-            player = dp;
-
-            if (currentFilm) {
-                const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
-                if (savedTime) {
-                    dp.seek(parseFloat(savedTime));
-                }
-
-                dp.on('timeupdate', () => {
-                    localStorage.setItem(`filmProgress_${currentFilm.id}`, dp.video.currentTime);
-                });
-            }
-
-            return dp;
-        }
-
         function playFilm(film) {
             currentFilm = film;
             const playerContainer = document.getElementById('player');
+            
+            // Gespeicherte Zeit abrufen
+            const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
+            
+            // Video Source setzen
+            player.src({
+                type: 'video/mp4',
+                src: film.streamUrl
+            });
+            
+            // Player anzeigen
             playerContainer.style.display = 'block';
-            initPlayer(film.streamUrl);
+            
+            // Wenn es eine gespeicherte Zeit gibt, zu dieser Position springen
+            if (savedTime) {
+                player.currentTime(parseFloat(savedTime));
+            }
+            
+            // Automatisch abspielen
+            player.play();
+            
+            // Fortschritt speichern
+            player.on('timeupdate', function() {
+                localStorage.setItem(`filmProgress_${currentFilm.id}`, player.currentTime());
+            });
         }
 
         async function loadCatalog(url) {
