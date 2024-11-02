@@ -5,19 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.3.0/video-js.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-mobile-ui/1.0.1/videojs-mobile-ui.css" rel="stylesheet">
-    
-    <!-- Standard Favicon -->
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
-    
-    <!-- iOS Web App meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="FilmFrei">
-    
-    <!-- iOS Web App icon -->
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.css" rel="stylesheet">
     
     <style>
         :root {
@@ -142,8 +130,8 @@
             z-index: 2000;
             display: none;
         }
-
-        .video-js {
+        
+        .dplayer {
             width: 100% !important;
             height: 100% !important;
         }
@@ -159,13 +147,6 @@
             z-index: 2001;
             cursor: pointer;
             padding: 10px;
-        }
-        
-        button, 
-        input[type="button"], 
-        input[type="submit"] {
-            min-height: 44px;
-            min-width: 44px;
         }
         
         @media (max-width: 768px) {
@@ -186,11 +167,6 @@
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
-
-        /* Video.js Mobile UI Anpassungen */
-        .vjs-mobile-ui .vjs-big-play-button {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
@@ -207,50 +183,102 @@
     
     <div id="player">
         <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <video id="videoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" playsinline>
-        </video>
+        <div id="dplayer"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.3.0/video.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-mobile-ui/1.0.1/videojs-mobile-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
     <script>
+        // Globale Variablen
         let catalog = null;
         let currentFilm = null;
         let player = null;
         const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
 
-        // Video.js Player initialisieren
+        // Warten bis das DOM vollständig geladen ist
         document.addEventListener('DOMContentLoaded', function() {
-            player = videojs('videoPlayer', {
-                fluid: true,
-                controls: true,
-                playsinline: true,
-                html5: {
-                    hls: {
-                        enableLowInitialPlaylist: true,
-                        smoothQualityChange: true,
-                        overrideNative: true
-                    },
-                    nativeVideoTracks: false,
-                    nativeAudioTracks: false,
-                    nativeTextTracks: false
+            // Event Listener Setup
+            setupEventListeners();
+            // Katalog laden
+            loadCatalog(defaultCatalogUrl);
+        });
+
+        function setupEventListeners() {
+            // Close Player Button
+            const closePlayerBtn = document.getElementById('closePlayer');
+            if (closePlayerBtn) {
+                closePlayerBtn.addEventListener('click', () => {
+                    const playerContainer = document.getElementById('player');
+                    playerContainer.style.display = 'none';
+                    if (player) {
+                        player.destroy();
+                        player = null;
+                    }
+                    currentFilm = null;
+                });
+            }
+
+            // Search Bar
+            const searchBar = document.getElementById('searchBar');
+            if (searchBar) {
+                searchBar.addEventListener('input', searchFilms);
+            }
+
+            // Refresh Link
+            const refreshLink = document.getElementById('refreshLink');
+            if (refreshLink) {
+                refreshLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadCatalog(defaultCatalogUrl);
+                });
+            }
+
+            // Visibility Change
+            document.addEventListener("visibilitychange", function() {
+                if (!document.hidden) {
+                    window.location.reload();
                 }
+            });
+        }
+
+        function initPlayer(url) {
+            if (player) {
+                player.destroy();
+            }
+
+            const dp = new DPlayer({
+                container: document.getElementById('dplayer'),
+                screenshot: true,
+                video: {
+                    url: url,
+                    type: 'auto'
+                },
+                autoplay: true
             });
 
-            // Mobile UI Plugin aktivieren
-            player.mobileUi({
-                fullscreen: {
-                    enterOnRotate: true,
-                    exitOnRotate: true,
-                    lockOnRotate: true
-                },
-                touchControls: {
-                    seekSeconds: 10,
-                    tapTimeout: 300,
-                    disableOnEnd: false
+            player = dp;
+
+            // Fortschritt wiederherstellen
+            if (currentFilm) {
+                const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
+                if (savedTime) {
+                    dp.seek(parseFloat(savedTime));
                 }
-            });
-        });
+
+                dp.on('timeupdate', () => {
+                    localStorage.setItem(`filmProgress_${currentFilm.id}`, dp.video.currentTime);
+                });
+            }
+
+            return dp;
+        }
+
+        function playFilm(film) {
+            currentFilm = film;
+            const playerContainer = document.getElementById('player');
+            playerContainer.style.display = 'block';
+            initPlayer(film.streamUrl);
+        }
 
         async function loadCatalog(url) {
             try {
@@ -270,7 +298,7 @@
                 const card = document.createElement('div');
                 card.className = 'film-card';
                 card.innerHTML = `
-                    <img src="${film.poster}" alt="${film.title}">
+                    <img src="${film.poster}" alt="${film.title}" loading="lazy">
                     <div class="film-info">
                         <h3 class="film-title">${film.title}</h3>
                         <p class="film-year">${film.year || 'Unbekanntes Jahr'}</p>
@@ -281,43 +309,6 @@
             });
         }
 
-        function playFilm(film) {
-            currentFilm = film;
-            const playerContainer = document.getElementById('player');
-            
-            // Gespeicherte Zeit abrufen
-            const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
-            const startTime = savedTime ? parseFloat(savedTime) : 0;
-            
-            // Player vorbereiten und anzeigen
-            playerContainer.style.display = 'block';
-            
-            // Video.js Source setzen
-            player.src({
-                type: 'video/mp4',
-                src: currentFilm.streamUrl
-            });
-            
-            // Startzeit setzen und abspielen
-            player.currentTime(startTime);
-            player.play();
-            
-            // Fortschritt speichern
-            player.on('timeupdate', function() {
-                localStorage.setItem(`filmProgress_${currentFilm.id}`, player.currentTime());
-            });
-        }
-
-        document.getElementById('closePlayer').addEventListener('click', () => {
-            const playerContainer = document.getElementById('player');
-            playerContainer.style.display = 'none';
-            player.pause();
-            player.src(''); // Source zurücksetzen
-            currentFilm = null;
-        });
-
-        document.getElementById('searchBar').addEventListener('input', searchFilms);
-
         function searchFilms() {
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
             const filteredFilms = catalog.films.filter(film => 
@@ -325,20 +316,6 @@
             );
             renderFilms(filteredFilms);
         }
-
-        document.getElementById('refreshLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadCatalog(defaultCatalogUrl);
-        });
-
-        document.addEventListener("visibilitychange", function() {
-            if (!document.hidden) {
-                window.location.reload();
-            }
-        });
-
-        // Beim Start der Seite
-        loadCatalog(defaultCatalogUrl);
     </script>
 </body>
 </html>
