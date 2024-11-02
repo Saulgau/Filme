@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.3.0/video-js.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-mobile-ui/1.0.1/videojs-mobile-ui.css" rel="stylesheet">
     
     <!-- Standard Favicon -->
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
@@ -140,12 +141,11 @@
             background: #000;
             z-index: 2000;
             display: none;
-            padding: 0;
         }
 
-        .plyr {
-            height: 100%;
-            width: 100%;
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
         }
         
         #closePlayer {
@@ -186,6 +186,11 @@
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
+
+        /* Video.js Mobile UI Anpassungen */
+        .vjs-mobile-ui .vjs-big-play-button {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -202,37 +207,48 @@
     
     <div id="player">
         <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <video id="videoPlayer" playsinline controls crossorigin>
-            <source type="video/mp4">
-            Ihr Browser unterstützt keine Videos.
+        <video id="videoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" playsinline>
         </video>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.3.0/video.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-mobile-ui/1.0.1/videojs-mobile-ui.min.js"></script>
     <script>
         let catalog = null;
         let currentFilm = null;
         let player = null;
         const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
 
-        // Plyr initialisieren
+        // Video.js Player initialisieren
         document.addEventListener('DOMContentLoaded', function() {
-            player = new Plyr('#videoPlayer', {
-                controls: [
-                    'play-large',
-                    'play',
-                    'progress',
-                    'current-time',
-                    'duration',
-                    'mute',
-                    'volume',
-                    'captions',
-                    'settings',
-                    'pip',
-                    'fullscreen'
-                ],
-                settings: ['quality', 'speed'],
-                keyboard: { focused: true, global: true }
+            player = videojs('videoPlayer', {
+                fluid: true,
+                controls: true,
+                playsinline: true,
+                html5: {
+                    hls: {
+                        enableLowInitialPlaylist: true,
+                        smoothQualityChange: true,
+                        overrideNative: true
+                    },
+                    nativeVideoTracks: false,
+                    nativeAudioTracks: false,
+                    nativeTextTracks: false
+                }
+            });
+
+            // Mobile UI Plugin aktivieren
+            player.mobileUi({
+                fullscreen: {
+                    enterOnRotate: true,
+                    exitOnRotate: true,
+                    lockOnRotate: true
+                },
+                touchControls: {
+                    seekSeconds: 10,
+                    tapTimeout: 300,
+                    disableOnEnd: false
+                }
             });
         });
 
@@ -268,43 +284,35 @@
         function playFilm(film) {
             currentFilm = film;
             const playerContainer = document.getElementById('player');
-            const video = document.getElementById('videoPlayer');
             
             // Gespeicherte Zeit abrufen
             const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
             const startTime = savedTime ? parseFloat(savedTime) : 0;
             
-            // Video Quelle setzen
-            const source = video.querySelector('source');
-            source.src = currentFilm.streamUrl;
-            video.load();
-            
-            // Player anzeigen und abspielen
+            // Player vorbereiten und anzeigen
             playerContainer.style.display = 'block';
             
-            // Plyr aktualisieren
-            player.source = {
-                type: 'video',
-                sources: [{
-                    src: currentFilm.streamUrl,
-                    type: 'video/mp4'
-                }]
-            };
+            // Video.js Source setzen
+            player.src({
+                type: 'video/mp4',
+                src: currentFilm.streamUrl
+            });
             
             // Startzeit setzen und abspielen
-            player.currentTime = startTime;
+            player.currentTime(startTime);
             player.play();
             
             // Fortschritt speichern
             player.on('timeupdate', function() {
-                localStorage.setItem(`filmProgress_${currentFilm.id}`, player.currentTime);
+                localStorage.setItem(`filmProgress_${currentFilm.id}`, player.currentTime());
             });
         }
 
         document.getElementById('closePlayer').addEventListener('click', () => {
             const playerContainer = document.getElementById('player');
             playerContainer.style.display = 'none';
-            player.stop();
+            player.pause();
+            player.src(''); // Source zurücksetzen
             currentFilm = null;
         });
 
