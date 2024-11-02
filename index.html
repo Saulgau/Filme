@@ -238,39 +238,39 @@
             }
         }
 
-        function renderFilms(films) {
-            const filmGrid = document.getElementById('filmGrid');
-            filmGrid.innerHTML = '';
-            
-            films.forEach(film => {
-                const card = document.createElement('a');
-                card.className = 'film-card';
-                card.href = `player.html?id=${film.id}`;
-                card.target = '_blank';
-                
-                const duration = film.duration || 0;
-                const hours = Math.floor(duration / 3600);
-                const minutes = Math.floor((duration % 3600) / 60);
-                const durationText = hours > 0 ? 
-                    `${hours}Std ${minutes}Min` : 
-                    `${minutes}Min`;
-                
-                card.innerHTML = `
-                    <img src="${film.poster}" alt="${film.title}" loading="lazy">
-                    <div class="film-info">
-                        <h3 class="film-title">${film.title}</h3>
-                        <div class="film-meta">
-                            <span class="film-year">${film.year || 'Unbekanntes Jahr'}</span>
-                            <span class="film-duration">
-                                <i class="far fa-clock"></i>
-                                ${durationText}
-                            </span>
-                        </div>
-                    </div>
-                `;
-                filmGrid.appendChild(card);
-            });
-        }
+function renderFilms(films) {
+    const filmGrid = document.getElementById('filmGrid');
+    filmGrid.innerHTML = '';
+    
+    films.forEach(film => {
+        const card = document.createElement('a');
+        card.className = 'film-card';
+        card.href = `https://saulgau.github.io/FilmfreiPlayer/?id=${film.id}`;
+        card.target = '_blank';
+        
+        const duration = film.duration || 0;
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const durationText = hours > 0 ? 
+            `${hours}Std ${minutes}Min` : 
+            `${minutes}Min`;
+        
+        card.innerHTML = `
+            <img src="${film.poster}" alt="${film.title}" loading="lazy">
+            <div class="film-info">
+                <h3 class="film-title">${film.title}</h3>
+                <div class="film-meta">
+                    <span class="film-year">${film.year || 'Unbekanntes Jahr'}</span>
+                    <span class="film-duration">
+                        <i class="far fa-clock"></i>
+                        ${durationText}
+                    </span>
+                </div>
+            </div>
+        `;
+        filmGrid.appendChild(card);
+    });
+}
 
         function searchFilms() {
             if (!catalog) return;
