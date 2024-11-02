@@ -202,7 +202,6 @@
         <video id="videoPlayer" controls></video>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         let catalog = null;
         let currentFilm = null;
@@ -239,32 +238,20 @@
 
         function playFilm(film) {
             currentFilm = film;
-            startPlayback();
-        }
-
-        function startPlayback() {
             const player = document.getElementById('player');
             const video = document.getElementById('videoPlayer');
-            player.style.display = 'block';
-
+            
             // Gespeicherte Zeit abrufen
             const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
             const startTime = savedTime ? parseFloat(savedTime) : 0;
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(currentFilm.streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.currentTime = startTime;
-                    video.play();
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = currentFilm.streamUrl;
-                video.currentTime = startTime;
-                video.play();
-            }
-
+            
+            // Video Quelle setzen und abspielen
+            video.src = currentFilm.streamUrl;
+            video.currentTime = startTime;
+            player.style.display = 'block';
+            video.play();
+            
+            // Fortschritt speichern
             video.addEventListener('timeupdate', function() {
                 localStorage.setItem(`filmProgress_${currentFilm.id}`, video.currentTime);
             });
