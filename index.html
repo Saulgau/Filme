@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FilmFrei</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet"/>
     
     <style>
         :root {
@@ -21,86 +20,21 @@
             padding: 0;
         }
         
-        html {
-            -webkit-text-size-adjust: 100%;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
         }
         
-        .server-notice {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 3000;
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            border: 1px solid var(--primary-color);
-            display: none;
-        }
-
-        .server-notice h2 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .server-notice p {
-            margin-bottom: 20px;
-            color: #fff;
-            font-size: 1.1em;
-        }
-
-        .server-notice button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s;
-        }
-
-        .server-notice button:hover {
-            background: #ff0a16;
-        }
-
-        .backdrop {
+        header {
+            background-color: rgba(20, 20, 20, 0.8);
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2999;
-            backdrop-filter: blur(5px);
-            display: none;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background-color: rgba(20, 20, 20, 0.8);
-            position: sticky;
-            top: 0;
+            right: 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         
         .header-content {
@@ -128,7 +62,6 @@
             background-color: rgba(255,255,255,0.2);
             color: var(--text-color);
             font-size: 16px;
-            transition: background-color 0.3s ease;
         }
         
         #searchBar:focus {
@@ -136,24 +69,28 @@
             background-color: rgba(255,255,255,0.3);
         }
         
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+        
         .film-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
-            padding-top: 20px;
         }
         
         .film-card {
             background-color: var(--card-background);
             border-radius: 8px;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s;
             cursor: pointer;
         }
         
         .film-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         
         .film-card img {
@@ -167,7 +104,7 @@
         }
         
         .film-title {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 5px;
         }
         
@@ -176,7 +113,7 @@
             color: rgba(255,255,255,0.7);
         }
         
-        #player {
+        #videoPlayer {
             position: fixed;
             top: 0;
             left: 0;
@@ -186,29 +123,91 @@
             z-index: 2000;
             display: none;
         }
-
-        .video-js {
-            width: 100% !important;
-            height: 100% !important;
+        
+        #mainVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        #videoPlayer:hover .custom-controls {
+            opacity: 1;
+        }
+        
+        .control-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #closePlayer {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
             border: none;
-            color: #fff;
-            font-size: 24px;
-            z-index: 2001;
-            cursor: pointer;
+            color: white;
             padding: 10px;
+            cursor: pointer;
+            z-index: 2001;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #progressBar {
+            flex-grow: 1;
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            position: relative;
+            border-radius: 2.5px;
+        }
+        
+        #progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 2.5px;
+        }
+        
+        #timestamp {
+            color: white;
+            font-size: 14px;
+            min-width: 100px;
+            text-align: center;
         }
         
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                align-items: stretch;
             }
             
             .logo {
@@ -217,6 +216,7 @@
             
             #searchBar {
                 margin: 10px 0;
+                width: 100%;
             }
             
             .film-grid {
@@ -226,15 +226,6 @@
     </style>
 </head>
 <body>
-    <!-- Server-Hinweis -->
-    <div class="backdrop" id="backdrop"></div>
-    <div class="server-notice" id="serverNotice">
-        <h2>Server-Wartungsarbeiten</h2>
-        <p>Aufgrund technischer Probleme können Filme derzeit nur auf Desktop-PCs abgespielt werden. Wir arbeiten mit Hochdruck an einer Lösung für mobile Geräte.</p>
-        <p>Wir bitten um Ihr Verständnis.</p>
-        <button onclick="closeNotice()">Verstanden</button>
-    </div>
-
     <header>
         <div class="header-content">
             <a href="#" class="logo" id="refreshLink">FilmFrei</a>
@@ -246,114 +237,111 @@
         <div class="film-grid" id="filmGrid"></div>
     </div>
     
-    <div id="player">
-        <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <video id="videoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="100%" height="100%">
-            <p class="vjs-no-js">
-                Um dieses Video anzusehen, aktivieren Sie bitte JavaScript und erwägen Sie ein Upgrade auf einen Webbrowser, der HTML5-Video unterstützt.
-            </p>
+    <div id="videoPlayer">
+        <button id="closePlayer">
+            <i class="fas fa-times"></i>
+        </button>
+        <video id="mainVideo">
+            <source src="" type="video/mp4">
+            Ihr Browser unterstützt keine HTML5-Videos.
         </video>
+        <div class="custom-controls">
+            <button class="control-button" id="playPauseBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <div id="progressBar">
+                <div id="progress"></div>
+            </div>
+            <span id="timestamp">0:00 / 0:00</span>
+            <button class="control-button" id="fullscreenBtn">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
     </div>
 
-    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
     <script>
         let catalog = null;
         let currentFilm = null;
-        let player = null;
         const defaultCatalogUrl = 'https://raw.githubusercontent.com/Saulgau/Kdkdkdkdkkdkdkdkxjdvejifvhxudbevdjjxb/refs/heads/main/catalog.ffcat';
-
-        // Server-Hinweis beim Start anzeigen
-        function showServerNotice() {
-            document.getElementById('backdrop').style.display = 'block';
-            document.getElementById('serverNotice').style.display = 'block';
-        }
-
-        function closeNotice() {
-            document.getElementById('backdrop').style.display = 'none';
-            document.getElementById('serverNotice').style.display = 'none';
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            showServerNotice();
-            setupEventListeners();
-            initVideoPlayer();
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setupPlayer();
             loadCatalog(defaultCatalogUrl);
+            
+            document.getElementById('refreshLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                loadCatalog(defaultCatalogUrl);
+            });
+            
+            document.getElementById('searchBar').addEventListener('input', searchFilms);
         });
-
-        function initVideoPlayer() {
-            player = videojs('videoPlayer', {
-                fluid: true,
-                controls: true,
-                autoplay: true,
-                preload: 'auto',
-                playbackRates: [0.5, 1, 1.5, 2]
-            });
-        }
-
-        function setupEventListeners() {
-            const closePlayerBtn = document.getElementById('closePlayer');
-            if (closePlayerBtn) {
-                closePlayerBtn.addEventListener('click', () => {
-                    const playerContainer = document.getElementById('player');
-                    playerContainer.style.display = 'none';
-                    if (player) {
-                        player.pause();
-                        player.src('');
-                    }
-                    currentFilm = null;
-                });
-            }
-
-            const searchBar = document.getElementById('searchBar');
-            if (searchBar) {
-                searchBar.addEventListener('input', searchFilms);
-            }
-
-            const refreshLink = document.getElementById('refreshLink');
-            if (refreshLink) {
-                refreshLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    loadCatalog(defaultCatalogUrl);
-                });
-            }
-
-            document.addEventListener("visibilitychange", function() {
-                if (!document.hidden) {
-                    window.location.reload();
+        
+        function setupPlayer() {
+            const video = document.getElementById('mainVideo');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+            const timestamp = document.getElementById('timestamp');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const closeBtn = document.getElementById('closePlayer');
+            
+            playPauseBtn.addEventListener('click', togglePlay);
+            video.addEventListener('click', togglePlay);
+            video.addEventListener('play', updatePlayButton);
+            video.addEventListener('pause', updatePlayButton);
+            video.addEventListener('timeupdate', updateProgress);
+            video.addEventListener('loadedmetadata', updateProgress);
+            
+            progressBar.addEventListener('click', seek);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            closeBtn.addEventListener('click', closePlayer);
+            
+            function togglePlay() {
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
                 }
-            });
-        }
-
-        function playFilm(film) {
-            currentFilm = film;
-            const playerContainer = document.getElementById('player');
-            
-            // Gespeicherte Zeit abrufen
-            const savedTime = localStorage.getItem(`filmProgress_${currentFilm.id}`);
-            
-            // Video Source setzen
-            player.src({
-                type: 'video/mp4',
-                src: film.streamUrl
-            });
-            
-            // Player anzeigen
-            playerContainer.style.display = 'block';
-            
-            // Wenn es eine gespeicherte Zeit gibt, zu dieser Position springen
-            if (savedTime) {
-                player.currentTime(parseFloat(savedTime));
             }
             
-            // Automatisch abspielen
-            player.play();
+            function updatePlayButton() {
+                playPauseBtn.innerHTML = `<i class="fas fa-${video.paused ? 'play' : 'pause'}"></i>`;
+            }
             
-            // Fortschritt speichern
-            player.on('timeupdate', function() {
-                localStorage.setItem(`filmProgress_${currentFilm.id}`, player.currentTime());
-            });
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                seconds = Math.floor(seconds % 60);
+                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            function updateProgress() {
+                const percent = (video.currentTime / video.duration) * 100;
+                progress.style.width = `${percent}%`;
+                timestamp.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+            }
+            
+            function seek(e) {
+                const percent = (e.offsetX / progressBar.offsetWidth);
+                video.currentTime = percent * video.duration;
+            }
+            
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.getElementById('videoPlayer').requestFullscreen();
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    document.exitFullscreen();
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            }
+            
+            function closePlayer() {
+                document.getElementById('videoPlayer').style.display = 'none';
+                video.pause();
+                video.currentTime = 0;
+            }
         }
-
+        
         async function loadCatalog(url) {
             try {
                 const response = await fetch(url);
@@ -364,10 +352,11 @@
                 alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
             }
         }
-
+        
         function renderFilms(films) {
             const filmGrid = document.getElementById('filmGrid');
             filmGrid.innerHTML = '';
+            
             films.forEach(film => {
                 const card = document.createElement('div');
                 card.className = 'film-card';
@@ -382,8 +371,21 @@
                 filmGrid.appendChild(card);
             });
         }
-
+        
+        function playFilm(film) {
+            currentFilm = film;
+            const video = document.getElementById('mainVideo');
+            const player = document.getElementById('videoPlayer');
+            
+            video.querySelector('source').src = film.streamUrl;
+            video.load();
+            player.style.display = 'block';
+            video.play();
+        }
+        
         function searchFilms() {
+            if (!catalog) return;
+            
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
             const filteredFilms = catalog.films.filter(film => 
                 film.title.toLowerCase().includes(searchTerm)
