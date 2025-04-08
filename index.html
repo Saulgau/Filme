@@ -1,167 +1,192 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FilmFrei - Dienst eingestellt</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-hover: #4f46e5;
-            --background-color: #0f172a;
-            --surface-color: #1e293b;
-            --text-color: #f8fafc;
-            --text-secondary: #94a3b8;
-            --error-color: #ef4444;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            background-color: var(--background-color);
-            background-image: 
-                radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-                radial-gradient(at 80% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-                radial-gradient(at 0% 50%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
-            color: var(--text-color);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            line-height: 1.6;
-        }
-        
-        .message-container {
-            max-width: 600px;
-            width: 100%;
-            background-color: rgba(30, 41, 59, 0.8);
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            animation: fadeIn 0.5s ease;
-        }
+  <meta charset="UTF-8">
+  <title>FilmFrei</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #14181c;
+      --primary: #00acc1;
+      --text: #e0f7fa;
+      --card-bg: #1e242b;
+      --highlight: #00bcd4;
+      --radius: 12px;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .logo i {
-            font-size: 1.75rem;
-        }
+    body {
+      margin: 0;
+      font-family: 'Rubik', sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
 
-        .title {
-            color: var(--error-color);
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
+    .header {
+      text-align: center;
+      padding: 2rem;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
 
-        .message {
-            color: var(--text-color);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-size: 1.1rem;
-        }
+    .search-container {
+      display: flex;
+      justify-content: center;
+      padding-bottom: 1rem;
+    }
 
-        .signature {
-            color: var(--text-secondary);
-            text-align: right;
-            font-style: italic;
-            margin-top: 2rem;
-        }
+    .search-container input {
+      width: 320px;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius);
+      border: none;
+      background-color: var(--card-bg);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
 
-        .divider {
-            height: 1px;
-            background: linear-gradient(
-                90deg, 
-                transparent, 
-                rgba(99, 102, 241, 0.2), 
-                transparent
-            );
-            margin: 2rem 0;
-        }
+    .search-container input:focus {
+      border: 2px solid var(--highlight);
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .video-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 2rem;
+    }
 
-        @media (max-width: 480px) {
-            .message-container {
-                padding: 1.5rem;
-            }
+    .video-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1rem;
+      width: 200px;
+      transition: transform 0.3s ease, box-shadow 0.3s;
+      cursor: pointer;
+    }
 
-            .logo {
-                font-size: 1.75rem;
-            }
+    .video-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,188,212,0.4);
+    }
 
-            .logo i {
-                font-size: 1.5rem;
-            }
+    .video-card img {
+      width: 100%;
+      border-radius: var(--radius);
+    }
 
-            .title {
-                font-size: 1.25rem;
-            }
+    .video-title {
+      margin-top: 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      color: var(--highlight);
+    }
 
-            .message {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.95);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--radius);
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .modal-content iframe {
+      width: 640px;
+      height: 360px;
+      border: none;
+      border-radius: var(--radius);
+    }
+
+    .modal-content img {
+      width: 240px;
+      border-radius: var(--radius);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 2rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: var(--primary);
+    }
+  </style>
 </head>
 <body>
-    <div class="message-container">
-        <div class="logo">
-            <i class="fas fa-film"></i>
-            FilmFrei
-        </div>
+  <div class="header">FilmFrei – Clip.Place Test</div>
 
-        <h1 class="title">
-            <i class="fas fa-server"></i>
-            Server abgeschaltet
-        </h1>
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Suche nach Titeln..." onkeyup="filterVideos()">
+  </div>
 
-        <p class="message">
-            Liebe Nutzerinnen und Nutzer,<br><br>
-            wir müssen euch leider mitteilen, dass alle Server von FilmFrei abgeschaltet wurden. Der Dienst wird mit sofortiger Wirkung eingestellt und nicht wieder aufgenommen.
-        </p>
-
-        <div class="divider"></div>
-
-        <p class="signature">
-            Euer FilmFrei Team
-        </p>
+  <div class="video-grid" id="videoGrid">
+    <div class="video-card" data-title="Testvideo" onclick="openModal('https://clip.place/videos/embed/5reHebRHsJpqcSWCurxLLj', 'https://via.placeholder.com/240x360?text=Test+Cover')">
+      <img src="https://via.placeholder.com/200x300?text=Test+Cover" alt="Cover">
+      <div class="video-title">Testvideo</div>
     </div>
+
+    <div class="video-card" data-title="Der Goldene Handschuh" onclick="openModal('https://clip.place/videos/embed/5yAseDznmJo7VuP6PFA3bT', 'https://musicart.xboxlive.com/7/43135100-0000-0000-0000-000000000002/504/image.jpg')">
+      <img src="https://musicart.xboxlive.com/7/43135100-0000-0000-0000-000000000002/504/image.jpg" alt="Der Goldene Handschuh">
+      <div class="video-title">Der Goldene Handschuh</div>
+    </div>
+  </div>
+
+  <div class="modal" id="videoModal">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div class="modal-content">
+      <img id="modalCover" src="" alt="Cover">
+      <iframe id="modalIframe" src="" allowfullscreen sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+  </div>
+
+  <script>
+    function openModal(videoUrl, coverUrl) {
+      document.getElementById('modalCover').src = coverUrl;
+      document.getElementById('modalIframe').src = videoUrl;
+      document.getElementById('videoModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('videoModal').style.display = 'none';
+      document.getElementById('modalIframe').src = '';
+      document.body.style.overflow = 'auto';
+    }
+
+    function filterVideos() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.video-card');
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        card.style.display = title.includes(input) ? 'block' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>
