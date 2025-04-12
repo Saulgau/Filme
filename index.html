@@ -113,9 +113,6 @@
     }
 
     .modal-content iframe {
-      width: 640px;
-      height: 360px;
-      border: none;
       border-radius: var(--radius);
     }
 
@@ -146,36 +143,36 @@
   </div>
 
   <div class="video-grid" id="videoGrid">
-    <div class="video-card" data-title="Testvideo" onclick="openModal('https://clip.place/videos/embed/5reHebRHsJpqcSWCurxLLj', 'https://via.placeholder.com/240x360?text=Test+Cover')">
-      <img src="https://via.placeholder.com/200x300?text=Test+Cover" alt="Cover">
-      <div class="video-title">Testvideo</div>
+    <!-- Beispielvideo -->
+    <div class="video-card" data-title="4K Test Video"
+      onclick="openModal('<iframe title=&quot;4K Test Video&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/x7XCdjXNuFj1BUwuLwWkaZ?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot; sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;></iframe>', 
+      'https://via.placeholder.com/240x360?text=4K+Test')">
+      <img src="https://via.placeholder.com/200x300?text=4K+Test" alt="4K Test Cover">
+      <div class="video-title">4K Test Video</div>
     </div>
 
-    <div class="video-card" data-title="Mr. No Pain" onclick="openModal('https://clip.place/videos/embed/tqpW58GFoCCCyaEn2JRYdh?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0%22%20frameborder=%220%22%20allowfullscreen=%22%22%20sandbox=%22allow-same-origin%20allow-scripts%20allow-popups%20allow-forms', 'https://filmpalast.to/files/movies/450/mr-no-pain.jpg')">
-      <img src="https://filmpalast.to/files/movies/450/mr-no-pain.jpg" alt="Mr. No Pain">
-      <div class="video-title">Mr. No Pain</div>
-    </div>
+    <!-- Weitere Videos kannst du genauso hinzufügen -->
   </div>
 
   <div class="modal" id="videoModal">
     <span class="close-btn" onclick="closeModal()">&times;</span>
     <div class="modal-content">
       <img id="modalCover" src="" alt="Cover">
-      <iframe id="modalIframe" src="" allowfullscreen sandbox="allow-scripts allow-same-origin"></iframe>
+      <div id="modalIframeContainer"></div>
     </div>
   </div>
 
   <script>
-    function openModal(videoUrl, coverUrl) {
+    function openModal(iframeHtml, coverUrl) {
       document.getElementById('modalCover').src = coverUrl;
-      document.getElementById('modalIframe').src = videoUrl;
+      document.getElementById('modalIframeContainer').innerHTML = iframeHtml;
       document.getElementById('videoModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
       document.getElementById('videoModal').style.display = 'none';
-      document.getElementById('modalIframe').src = '';
+      document.getElementById('modalIframeContainer').innerHTML = '';
       document.body.style.overflow = 'auto';
     }
 
