@@ -169,26 +169,34 @@
     <input type="text" id="searchInput" placeholder="Suche nach Titeln..." onkeyup="filterVideos()">
   </div>
 
-  <div class="video-grid" id="videoGrid">
-    <div class="video-card" data-title="4K Test Video"
-      onclick="openModal('<iframe title=&quot;4K Test Video&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/x7XCdjXNuFj1BUwuLwWkaZ?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot; sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;></iframe>', 
+<div class="video-grid" id="videoGrid">
+
+  <div class="video-card" data-title="4K Test Video"
+    onclick="openModal(
+      '&lt;iframe title=&quot;4K Test Video&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/x7XCdjXNuFj1BUwuLwWkaZ?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
       'https://static.displate.com/857x1200/displate/2022-06-30/f8f3313d1ed6ba16b4eae1aabdbb7746_890334db197b0d72baeedc5725a28975.jpg')">
-      <img src="https://static.displate.com/857x1200/displate/2022-06-30/f8f3313d1ed6ba16b4eae1aabdbb7746_890334db197b0d72baeedc5725a28975.jpg" alt="4K Test Cover">
-      <div class="video-title">4K Test Video</div>
-    </div>
-<div class="video-card" data-title="Mr. No Pain"
-  onclick="openModal('<iframe title=&quot;Mr. No Pain&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/tqpW58GFoCCCyaEn2JRYdh?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot; sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;></iframe>', 
-  'https://filmpalast.to/files/movies/450/mr-no-pain.jpg')">
-  <img src="https://filmpalast.to/files/movies/450/mr-no-pain.jpg" alt="Mr. No Pain Cover">
-  <div class="video-title">Mr. No Pain</div>
-</div>
-        <div class="video-card" data-title="Mickey 17"
-      onclick="openModal('<iframe title="Mickey 17" width="560" height="315" src="https://clip.place/videos/embed/d8SWA8R8pLAStCsxXxbpgK?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>', 
-      'https://filmpalast.to/files/movies/450/mickey-17.jpg')">
-      <img src="https://filmpalast.to/files/movies/450/mickey-17.jpg" alt="Mickey 17 Cover">
-      <div class="video-title">Mickey 17</div>
-    </div>
+    <img src="https://static.displate.com/857x1200/displate/2022-06-30/f8f3313d1ed6ba16b4eae1aabdbb7746_890334db197b0d72baeedc5725a28975.jpg" alt="4K Test Cover">
+    <div class="video-title">4K Test Video</div>
   </div>
+
+  <div class="video-card" data-title="Mr. No Pain"
+    onclick="openModal(
+      '&lt;iframe title=&quot;Mr. No Pain&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/tqpW58GFoCCCyaEn2JRYdh?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
+      'https://filmpalast.to/files/movies/450/mr-no-pain.jpg')">
+    <img src="https://filmpalast.to/files/movies/450/mr-no-pain.jpg" alt="Mr. No Pain Cover">
+    <div class="video-title">Mr. No Pain</div>
+  </div>
+
+  <div class="video-card" data-title="Mickey 17"
+    onclick="openModal(
+      '&lt;iframe title=&quot;Mickey 17&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/d8SWA8R8pLAStCsxXxbpgK?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
+      'https://filmpalast.to/files/movies/450/mickey-17.jpg')">
+    <img src="https://filmpalast.to/files/movies/450/mickey-17.jpg" alt="Mickey 17 Cover">
+    <div class="video-title">Mickey 17</div>
+  </div>
+
+</div>
+
 
   <div class="modal" id="videoModal">
     <span class="close-btn" onclick="closeModal()">&times;</span>
