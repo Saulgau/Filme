@@ -1,233 +1,873 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>FilmFrei</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --background: #0b0b1a;
-      --primary: #7b61ff;
-      --text: #e0e0ff;
-      --card-bg: #151528;
-      --highlight: #8f84ff;
-      --radius: 16px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmfrei - Streaming im Apple-Style</title>
+    <style>
+        /* Reset und Grundeinstellungen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        body {
+            background-color: #121212;
+            color: #F5F5F5;
+            overflow-x: hidden;
+        }
 
-    body {
-      margin: 0;
-      font-family: 'Rubik', sans-serif;
-      background: var(--background);
-      color: var(--text);
-    }
+        /* Header-Bereich */
+        header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    header {
-      display: flex;
-      align-items: center;
-      padding: 1.5rem 2rem;
-      background-color: transparent;
-    }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .logo-box {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: var(--card-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(123, 97, 255, 0.3);
-    }
+        .logo {
+            width: 40px;
+            height: 40px;
+            background-color: #0A84FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(10, 132, 255, 0.3);
+            transition: all 0.3s ease;
+        }
 
-    .logo-box img {
-      width: 36px;
-      height: 36px;
-    }
+        .logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(10, 132, 255, 0.5);
+        }
 
-    .site-title {
-      margin-left: 1rem;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--primary);
-    }
+        .brand-name {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
 
-    .search-container {
-      display: flex;
-      justify-content: center;
-      padding-bottom: 1rem;
-    }
+        /* Suchleiste */
+        .search-container {
+            position: relative;
+            max-width: 300px;
+            width: 100%;
+        }
 
-    .search-container input {
-      width: 320px;
-      padding: 0.6rem 1rem;
-      border-radius: var(--radius);
-      border: none;
-      background-color: var(--card-bg);
-      color: var(--text);
-      font-size: 1rem;
-      outline: none;
-      border: 2px solid transparent;
-      transition: 0.3s;
-    }
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border-radius: 20px;
+            border: none;
+            background-color: #1E1E1E;
+            color: #F5F5F5;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
 
-    .search-container input:focus {
-      border: 2px solid var(--highlight);
-    }
+        .search-input:focus {
+            outline: none;
+            background-color: #2A2A2A;
+            box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.5);
+        }
 
-    .video-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: 2rem;
-    }
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
 
-    .video-card {
-      background-color: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 1rem;
-      width: 200px;
-      transition: transform 0.3s ease, box-shadow 0.3s;
-      cursor: pointer;
-    }
+        .search-results {
+            position: absolute;
+            top: 50px;
+            width: 100%;
+            background-color: #1A1A1A;
+            border-radius: 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
 
-    .video-card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(123, 97, 255, 0.4);
-    }
+        .search-results.active {
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
-    .video-card img {
-      width: 100%;
-      border-radius: var(--radius);
-    }
+        .search-result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .video-title {
-      margin-top: 0.5rem;
-      text-align: center;
-      font-weight: 600;
-      color: var(--highlight);
-    }
+        .search-result-item:hover {
+            background-color: #2A2A2A;
+        }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0,0,0,0.95);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+        /* Hauptbereich */
+        main {
+            padding: 40px;
+        }
 
-    .modal-content {
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: var(--radius);
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #F5F5F5;
+        }
 
-    .modal-content iframe {
-      border-radius: var(--radius);
-    }
+        /* Filmgalerie */
+        .film-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
 
-    .modal-content img {
-      width: 240px;
-      border-radius: var(--radius);
-    }
+        .film-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            aspect-ratio: 2/3;
+            background-color: #1A1A1A;
+        }
 
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 2rem;
-      color: var(--text);
-      cursor: pointer;
-    }
+        .film-card:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
 
-    .close-btn:hover {
-      color: var(--primary);
-    }
-  </style>
+        .film-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .film-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 60px 15px 15px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .film-card:hover .film-info {
+            opacity: 1;
+        }
+
+        .film-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .film-year {
+            font-size: 14px;
+            color: #BBBBBB;
+        }
+
+        /* Film-Detailansicht */
+        .film-detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .film-detail-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .film-detail-container {
+            display: flex;
+            max-width: 1200px;
+            width: 90%;
+            background-color: #1A1A1A;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .film-detail-overlay.active .film-detail-container {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .film-detail-left {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .film-detail-cover {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .film-detail-info {
+            margin-top: 20px;
+        }
+
+        .film-detail-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .film-detail-meta {
+            display: flex;
+            margin-bottom: 15px;
+            color: #BBBBBB;
+            font-size: 14px;
+        }
+
+        .film-detail-year, .film-detail-upload {
+            margin-right: 20px;
+        }
+
+        .film-detail-description {
+            line-height: 1.6;
+            color: #DDDDDD;
+        }
+
+        .film-detail-right {
+            flex: 2;
+            position: relative;
+        }
+
+        .film-detail-player {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        .film-player-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .film-detail-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1010;
+            transition: background-color 0.3s ease;
+        }
+
+        .film-detail-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .film-detail-close:before, .film-detail-close:after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 2px;
+            background-color: #FFF;
+        }
+
+        .film-detail-close:before {
+            transform: rotate(45deg);
+        }
+
+        .film-detail-close:after {
+            transform: rotate(-45deg);
+        }
+
+        /* Cookie-Banner */
+        .cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background-color: #1E1E1E;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 900;
+            display: none;
+        }
+
+        .cookie-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .cookie-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #DDDDDD;
+        }
+
+        .cookie-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cookie-accept {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            background-color: #0A84FF;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cookie-accept:hover {
+            background-color: #0071e3;
+        }
+
+        .cookie-more {
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+            align-self: center;
+        }
+
+        .cookie-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .film-detail-container {
+                flex-direction: column;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .film-detail-left {
+                display: flex;
+                flex-direction: row;
+                padding: 20px;
+            }
+
+            .film-detail-cover {
+                width: 40%;
+                max-width: 200px;
+            }
+
+            .film-detail-info {
+                margin-top: 0;
+                margin-left: 20px;
+                flex: 1;
+            }
+
+            .film-detail-right {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .film-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 15px;
+            }
+
+            .film-detail-left {
+                flex-direction: column;
+            }
+
+            .film-detail-cover {
+                width: 100%;
+                max-width: none;
+            }
+
+            .film-detail-info {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+
+            .film-detail-right {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-container {
+                display: none;
+            }
+
+            .mobile-search-toggle {
+                display: block;
+                font-size: 20px;
+                color: #F5F5F5;
+                cursor: pointer;
+            }
+
+            .mobile-search-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 15px;
+                background-color: #1A1A1A;
+                z-index: 150;
+                display: none;
+            }
+
+            .mobile-search-container.active {
+                display: block;
+            }
+
+            .film-detail-overlay {
+                align-items: flex-end;
+            }
+
+            .film-detail-container {
+                width: 100%;
+                height: 90%;
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="logo-box">
-      <img src="https://i.ibb.co/mVppM8YB/Chat-GPT-Image-12-Apr-2025-14-57-00.png" alt="FilmFrei Logo">
+    <!-- Header mit Logo und Suche -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">F</div>
+            <div class="brand-name">Filmfrei</div>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Film suchen...">
+            <div class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <div class="search-results"></div>
+        </div>
+        <div class="mobile-search-toggle" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Mobile-Suchleiste (erscheint bei kleinen Bildschirmen) -->
+    <div class="mobile-search-container">
+        <input type="text" class="search-input" placeholder="Film suchen...">
     </div>
-    <div class="site-title">FilmFrei</div>
-  </header>
 
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Suche nach Titeln..." onkeyup="filterVideos()">
-  </div>
+    <!-- Hauptinhalt -->
+    <main>
+        <section>
+            <h2 class="section-title">Neueste Filme</h2>
+            <div class="film-grid" id="latest-films">
+                <!-- Film-Karten werden hier per JavaScript eingefügt -->
+            </div>
+        </section>
+        
+        <section>
+            <h2 class="section-title">Beliebte Filme</h2>
+            <div class="film-grid" id="popular-films">
+                <!-- Film-Karten werden hier per JavaScript eingefügt -->
+            </div>
+        </section>
+    </main>
 
-<div class="video-grid" id="videoGrid">
-
-  <div class="video-card" data-title="4K Test Video"
-    onclick="openModal(
-      '&lt;iframe title=&quot;4K Test Video&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/x7XCdjXNuFj1BUwuLwWkaZ?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
-      'https://static.displate.com/857x1200/displate/2022-06-30/f8f3313d1ed6ba16b4eae1aabdbb7746_890334db197b0d72baeedc5725a28975.jpg')">
-    <img src="https://static.displate.com/857x1200/displate/2022-06-30/f8f3313d1ed6ba16b4eae1aabdbb7746_890334db197b0d72baeedc5725a28975.jpg" alt="4K Test Cover">
-    <div class="video-title">4K Test Video</div>
-  </div>
-
-  <div class="video-card" data-title="Mr. No Pain"
-    onclick="openModal(
-      '&lt;iframe title=&quot;Mr. No Pain&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/tqpW58GFoCCCyaEn2JRYdh?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
-      'https://filmpalast.to/files/movies/450/mr-no-pain.jpg')">
-    <img src="https://filmpalast.to/files/movies/450/mr-no-pain.jpg" alt="Mr. No Pain Cover">
-    <div class="video-title">Mr. No Pain</div>
-  </div>
-
-  <div class="video-card" data-title="Mickey 17"
-    onclick="openModal(
-      '&lt;iframe title=&quot;Mickey 17&quot; width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://clip.place/videos/embed/d8SWA8R8pLAStCsxXxbpgK?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0&quot; frameborder=&quot;0&quot; allowfullscreen sandbox=&quot;allow-same-origin allow-scripts allow-popups allow-forms&quot;&gt;&lt;/iframe&gt;',
-      'https://filmpalast.to/files/movies/450/mickey-17.jpg')">
-    <img src="https://filmpalast.to/files/movies/450/mickey-17.jpg" alt="Mickey 17 Cover">
-    <div class="video-title">Mickey 17</div>
-  </div>
-
-</div>
-
-
-  <div class="modal" id="videoModal">
-    <span class="close-btn" onclick="closeModal()">&times;</span>
-    <div class="modal-content">
-      <img id="modalCover" src="" alt="Cover">
-      <div id="modalIframeContainer"></div>
+    <!-- Film-Detailansicht Overlay (initial versteckt) -->
+    <div class="film-detail-overlay">
+        <div class="film-detail-close"></div>
+        <div class="film-detail-container">
+            <div class="film-detail-left">
+                <img src="" alt="" class="film-detail-cover">
+                <div class="film-detail-info">
+                    <h3 class="film-detail-title"></h3>
+                    <div class="film-detail-meta">
+                        <span class="film-detail-year"></span>
+                        <span class="film-detail-upload"></span>
+                    </div>
+                    <p class="film-detail-description"></p>
+                </div>
+            </div>
+            <div class="film-detail-right">
+                <div class="film-detail-player">
+                    <!-- iFrame wird hier per JavaScript eingefügt -->
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    function openModal(iframeHtml, coverUrl) {
-      document.getElementById('modalCover').src = coverUrl;
-      document.getElementById('modalIframeContainer').innerHTML = iframeHtml;
-      document.getElementById('videoModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
+    <!-- Cookie-Banner -->
+    <div class="cookie-banner">
+        <h3 class="cookie-title">Cookie-Hinweis</h3>
+        <p class="cookie-text">Diese Website verwendet Cookies, um dir die bestmögliche Nutzererfahrung zu bieten. Durch die weitere Nutzung stimmst du der Verwendung von Cookies zu.</p>
+        <div class="cookie-actions">
+            <button class="cookie-accept">Akzeptieren</button>
+            <a href="#" class="cookie-more">Mehr erfahren</a>
+        </div>
+    </div>
 
-    function closeModal() {
-      document.getElementById('videoModal').style.display = 'none';
-      document.getElementById('modalIframeContainer').innerHTML = '';
-      document.body.style.overflow = 'auto';
-    }
+    <script>
+        // Beispiel-Filmdaten
+        const filme = [
+{
+    titel: "Mickey 17",
+    jahr: 2025,
+    hochgeladenAm: "2025-04-13",
+    beschreibung: "Mickey Barnes arbeitet als ein sogenannter \"Expendable\" auf einem Raumschiff, das Kolonialisten zu dem unerforschten Planeten Niflheim bringen soll. Als Expendable wird er für gefährliche Missionen eingesetzt. Sollte er dabei sterben, wird mit der Hilfe eines Bioprinters einfach ein Klon von ihm angefertigt. Als er bei der Erkundung des neuen Planeten in eine Gletscherspalte gerät, halten ihn die Kolonialisten für tot und drucken eine neue Version. Doch das Original ist noch am Leben.",
+    cover: "https://s3.amazonaws.com/nightjarprod/content/uploads/sites/130/2024/01/15104623/MKY17_VERT_TSR_2764x4096_DOM_NIRD_REV-scaled.jpg",
+    iframe: "<iframe title=\"Mickey 17\" width=\"100%\" height=\"315\" src=\"https://clip.place/videos/embed/d8SWA8R8pLAStCsxXxbpgK?title=0&amp;warningTitle=0&amp;peertubeLink=0&amp;p2p=0\" frameborder=\"0\" allowfullscreen=\"\" sandbox=\"allow-same-origin allow-scripts allow-popups allow-forms\"></iframe>"
+},
+{
+                titel: "Inception",
+                jahr: 2010,
+                hochgeladenAm: "2025-04-10",
+                beschreibung: "Dom Cobb ist ein Dieb, der sich auf das Extrahieren von Geheimnissen aus dem Unterbewusstsein spezialisiert hat. Nun erhält er den Auftrag, statt zu stehlen eine Idee zu pflanzen. Eine gefährliche Mission beginnt.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/YoHD9XEInc0' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "The Dark Knight",
+                jahr: 2008,
+                hochgeladenAm: "2025-04-08",
+                beschreibung: "Batman, Lieutenant Gordon und Staatsanwalt Dent bekämpfen das organisierte Verbrechen in Gotham City, bis ein neuer Gegner namens Joker auftaucht und Chaos verbreitet.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/EXeTwQWrcwY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "Pulp Fiction",
+                jahr: 1994,
+                hochgeladenAm: "2025-04-05",
+                beschreibung: "Die Leben mehrerer Gangster, Boxer und anderer Charaktere verknüpfen sich in einer Reihe von skurrilen und gewalttätigen Ereignissen in Los Angeles.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/s7EdQ4FqbhY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "Interstellar",
+                jahr: 2014,
+                hochgeladenAm: "2025-04-01",
+                beschreibung: "Eine Gruppe von Astronauten reist durch ein Wurmloch im Weltraum, um eine neue Heimat für die Menschheit zu finden, nachdem die Erde unbewohnbar geworden ist.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/zSWdZVtXT7E' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "Fight Club",
+                jahr: 1999,
+                hochgeladenAm: "2025-03-29",
+                beschreibung: "Ein unzufriedener Büroangestellter gründet mit dem charismatischen Seifenverkäufer Tyler Durden einen Untergrund-Kampfclub, der sich zu etwas viel Gefährlicherem entwickelt.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/qtRKdVHc-cE' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "The Godfather",
+                jahr: 1972,
+                hochgeladenAm: "2025-03-25",
+                beschreibung: "Don Vito Corleone, Oberhaupt einer der mächtigsten Mafia-Clans in New York, übergibt langsam die Kontrolle an seinen Sohn Michael, der zunächst nicht am Familiengeschäft beteiligt sein wollte.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/sY1S34973zA' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            },
+            {
+                titel: "Blade Runner 2049",
+                jahr: 2017,
+                hochgeladenAm: "2025-03-22",
+                beschreibung: "Ein neuer Blade Runner, Officer K, entdeckt ein lange verborgenes Geheimnis, das das Potenzial hat, die Überreste der Gesellschaft ins Chaos zu stürzen, und macht sich auf die Suche nach Rick Deckard, der seit 30 Jahren verschwunden ist.",
+                cover: "/api/placeholder/400/600",
+                iframe: "<iframe src='https://www.youtube.com/embed/gCcx85zbxz4' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+            }
+        ];
 
-    function filterVideos() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const cards = document.querySelectorAll('.video-card');
-      cards.forEach(card => {
-        const title = card.getAttribute('data-title').toLowerCase();
-        card.style.display = title.includes(input) ? 'block' : 'none';
-      });
+        // DOM-Elemente
+        const latestFilmsContainer = document.getElementById('latest-films');
+        const popularFilmsContainer = document.getElementById('popular-films');
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+        const filmDetailOverlay = document.querySelector('.film-detail-overlay');
+        const filmDetailClose = document.querySelector('.film-detail-close');
+        const cookieBanner = document.querySelector('.cookie-banner');
+        const cookieAccept = document.querySelector('.cookie-accept');
+
+        // Filme nach Datum sortieren (neueste zuerst)
+        const sortedByDate = [...filme].sort((a, b) => new Date(b.hochgeladenAm) - new Date(a.hochgeladenAm));
+        
+        // Zufällige Reihenfolge für "Beliebte Filme"
+        const randomized = [...filme].sort(() => Math.random() - 0.5);
+
+        // Filmkarten erstellen und einfügen
+        function createFilmCard(film) {
+            const card = document.createElement('div');
+            card.classList.add('film-card');
+            card.innerHTML = `
+                <img src="${film.cover}" alt="${film.titel}">
+                <div class="film-info">
+                    <div class="film-title">${film.titel}</div>
+                    <div class="film-year">${film.jahr}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => openFilmDetail(film));
+            return card;
+        }
+
+        // Neueste Filme einfügen
+        sortedByDate.slice(0, 4).forEach(film => {
+            latestFilmsContainer.appendChild(createFilmCard(film));
+        });
+
+        // Beliebte Filme einfügen
+        randomized.slice(0, 8).forEach(film => {
+            popularFilmsContainer.appendChild(createFilmCard(film));
+        });
+
+        // Suchfunktion
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length < 2) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            const matchedFilms = filme.filter(film => 
+                film.titel.toLowerCase().includes(searchTerm) || 
+                film.beschreibung.toLowerCase().includes(searchTerm)
+            );
+
+            searchResults.innerHTML = '';
+            
+            if (matchedFilms.length > 0) {
+                matchedFilms.forEach(film => {
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('search-result-item');
+                    resultItem.textContent = film.titel;
+                    resultItem.addEventListener('click', () => {
+                        openFilmDetail(film);
+                        searchResults.classList.remove('active');
+                        searchInput.value = '';
+                    });
+                    searchResults.appendChild(resultItem);
+                });
+                searchResults.classList.add('active');
+            } else {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // Klick außerhalb der Suchergebnisse schließt diese
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // Film-Detailansicht öffnen
+        function openFilmDetail(film) {
+            const coverImg = filmDetailOverlay.querySelector('.film-detail-cover');
+            const title = filmDetailOverlay.querySelector('.film-detail-title');
+            const year = filmDetailOverlay.querySelector('.film-detail-year');
+            const upload = filmDetailOverlay.querySelector('.film-detail-upload');
+            const description = filmDetailOverlay.querySelector('.film-detail-description');
+            const player = filmDetailOverlay.querySelector('.film-detail-player');
+
+            coverImg.src = film.cover;
+            coverImg.alt = film.titel;
+            title.textContent = film.titel;
+            year.textContent = `Jahr: ${film.jahr}`;
+            
+            // Datum formatieren
+            const uploadDate = new Date(film.hochgeladenAm);
+            const formattedDate = new Intl.DateTimeFormat('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }).format(uploadDate);
+            upload.textContent = `Hochgeladen: ${formattedDate}`;
+            
+            description.textContent = film.beschreibung;
+            player.innerHTML = film.iframe;
+
+            filmDetailOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Film-Detailansicht schließen
+        filmDetailClose.addEventListener('click', closeFilmDetail);
+        filmDetailOverlay.addEventListener('click', (e) => {
+            if (e.target === filmDetailOverlay) {
+                closeFilmDetail();
+            }
+        });
+
+        function closeFilmDetail() {
+            filmDetailOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            const player = filmDetailOverlay.querySelector('.film-detail-player');
+            player.innerHTML = ''; // iFrame entfernen, um Video zu stoppen
+        }
+
+        // Swipe-Geste auf Mobilgeräten für Detailansicht
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        filmDetailOverlay.addEventListener('touchstart', (e) => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+
+        filmDetailOverlay.addEventListener('touchend', (e) => {
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const swipeDistance = touchEndY - touchStartY;
+            if (swipeDistance > 100) { // Nach unten swipen, um zu schließen
+                closeFilmDetail();
+            }
+        }
+
+        // Cookie-Banner anzeigen (nur beim ersten Besuch)
+        if (!localStorage.getItem('cookiesAccepted')) {
+            cookieBanner.style.display = 'block';
+        }
+
+        cookieAccept.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieBanner.style.display = 'none';
+        });
+
+        // Mobile-Suche Toggle
+        const mobileSearchToggle = document.querySelector('.mobile-search-toggle');
+        const mobileSearchContainer = document.querySelector('.mobile-search-container');
+
+        if (mobileSearchToggle) {
+            mobileSearchToggle.addEventListener('click', () =>{
+    mobileSearchContainer.classList.toggle('active');
+});
+
+// Mobile-Suchleiste schließen, wenn man außerhalb klickt
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.mobile-search-container') && 
+        !e.target.closest('.mobile-search-toggle')) {
+        mobileSearchContainer.classList.remove('active');
     }
-  </script>
+});
+
+// Mobile-Suchfeld-Funktionalität
+const mobileSearchInput = mobileSearchContainer.querySelector('.search-input');
+mobileSearchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    // Alle Filmkarten filtern
+    const allFilmCards = document.querySelectorAll('.film-card');
+    
+    allFilmCards.forEach(card => {
+        const title = card.querySelector('.film-title').textContent.toLowerCase();
+        if (searchTerm.length > 1 && title.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else if (searchTerm.length > 1) {
+            card.style.display = 'none';
+        } else {
+            card.style.display = 'block';
+        }
+    });
+});
+}
+
+// Lazy Loading für Bilder
+if ('IntersectionObserver' in window) {
+    const lazyImages = document.querySelectorAll('img');
+    
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src || img.src;
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    lazyImages.forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+// Hintergrund-Farbverlauf-Animation (dezent)
+const mainElement = document.querySelector('main');
+let gradientPosition = 0;
+
+function animateGradient() {
+    gradientPosition = (gradientPosition + 0.2) % 360;
+    const gradient = `radial-gradient(circle at ${50 + Math.sin(gradientPosition * Math.PI / 180) * 10}% ${50 + Math.cos(gradientPosition * Math.PI / 180) * 10}%, rgba(10, 132, 255, 0.03), transparent 60%)`;
+    mainElement.style.backgroundImage = gradient;
+    requestAnimationFrame(animateGradient);
+}
+
+// Animation starten
+animateGradient();
+    </script>
 </body>
 </html>
