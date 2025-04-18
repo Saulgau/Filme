@@ -1,6 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Filmfrei - Streaming im Apple-Style</title>
@@ -490,6 +494,7 @@
                 height: 90%;
                 border-radius: 15px 15px 0 0;
             }
+
         }
     </style>
 </head>
@@ -755,8 +760,16 @@
             upload.textContent = `Hochgeladen: ${formattedDate}`;
             
             description.textContent = film.beschreibung;
-            player.innerHTML = film.iframe;
+player.innerHTML = `
+    <video id="film-video-player" controls crossorigin playsinline></video>
+`;
 
+const video = document.getElementById('film-video-player');
+const hls = new Hls();
+
+hls.loadSource(film.iframe);
+hls.attachMedia(video);
+new Plyr(video);
             filmDetailOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
